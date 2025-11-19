@@ -1,0 +1,17 @@
+<header>
+	<nav>
+		<a href="/twig/modele" class="menu-item">Accueil</a>
+		<div x-data="{ open: false }" class="menu-item">
+			<a @click="open = !open">Articles</a>
+			<div :class="open ? 'menu_show' : 'menu'" class="menu">
+				<template x-for="indice in [0, 1]" :key="indice">
+					<a :href="'article' + (indice + 1) + '.html'">Article
+						<span x-text="indice + 1"></span>
+					</a>
+				</template>
+			</div>
+		</div>
+		<a href="/twig/modele/contact.php" class="menu-item">Contact</a>
+		<img src="../../images/lune.png" alt="Lune" id="darkModeIcon">
+	</nav>
+</header>

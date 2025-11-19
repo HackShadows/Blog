@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Mon Blog</title>
+		<link rel="stylesheet" href="/css/style.css">
+	 	<script defer src="https://unpkg.com/alpinejs@3.15.0/dist/cdn.min.js"></script>
+		<script src="/javascript/script.js" defer></script>
+	</head>
+
+	<body>
+		<div class="wrapper">
+			{% include "header.twig" %}
+			<main>
+				{% block main %}
+					main
+				{% endblock %}
+			</main>
+			{% include "footer.twig" %}
+		</div>
+	</body>
+
+</html>

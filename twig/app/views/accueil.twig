@@ -1,0 +1,13 @@
+{% extends "base.twig" %}
+
+{% block main %}
+	<h1 class="title" id="homeTitle">Bienvenue sur mon blog</h1>
+	<div class="articles-list">
+		{% for article in resumes %}
+			<article class="article" onclick="location.href='/detailArticle?id={{ article.id }}'">
+				<h3>Article {{ article["id"] }} : {{ article["titre"] }}</h3>
+				<p>{{ article["contenu_resume"] }}</p>
+			</article>
+		{% endfor %}
+	</div>
+{% endblock %}

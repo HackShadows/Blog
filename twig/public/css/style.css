@@ -1,0 +1,316 @@
+/*
+Nom du fichier : styles.css
+
+Date de création : 03/10/2025
+
+Auteur : Marius Ciserane
+
+Ce fichier permet de mettre en style le fichier index.html
+*/
+:root {
+	--c: 220;
+	--font-color: rgb(20, 20, 20);
+	--background-color: rgb(var(--c), var(--c), var(--c));
+	--c2: calc(var(--c) - clamp(-1, calc(var(--c) - 100), 1) * 20);
+	--bg2: rgb(var(--c2), var(--c2), var(--c2));
+	--c3: calc(var(--c) - clamp(-1, calc(var(--c) - 100), 1) * 30);
+	--bg3: rgb(var(--c3), var(--c3), var(--c3));
+
+	--footer-bg-color: rgb(71, 71, 71);
+	--footer-font-color: rgb(220, 220, 220);
+}
+
+html {
+	box-sizing: border-box;
+	background-color: rgb(35, 33, 33);
+}
+
+body {
+	font-family: Arial, sans-serif;
+	background-color: var(--background-color);
+}
+
+
+
+/* .wrapper {
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+} */
+.wrapper {
+	display: grid;
+	grid-template-areas: "header" "main" "footer";
+	grid-template-rows: auto 1fr auto;
+	min-height: 100vh;
+}
+
+header {
+	grid-area: header;
+}
+
+main {
+	padding: 20px;
+	/* flex: 1; */
+	grid-area: main;
+	color: var(--font-color);
+}
+
+nav,
+footer {
+	background-color: var(--footer-bg-color);
+	color: var(--footer-font-color);
+	padding: 10px;
+}
+
+footer {
+	text-align: center;
+	font-size: 0.8em;
+	grid-area: footer;
+}
+
+.title {
+	text-align: center;
+	color: var(--font-color);
+}
+
+
+
+/* Bar de navigation */
+nav {
+	text-align: left;
+	display: flex;
+	flex-direction: row;
+	font-size: min(1.5em, 5.5vw);
+}
+
+nav a {
+	color: var(--footer-font-color);
+	text-decoration: none;
+}
+
+nav a:hover {
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+.menu {
+	overflow: hidden;
+	max-height: 0;
+	opacity: 0;
+	transition: max-height 0.4s ease, opacity 0.3s ease;
+	display: flex;
+	flex-direction: column;
+}
+
+.menu_show {
+	max-height: 200px;
+	opacity: 1;
+	display: flex;
+	flex-direction: column;
+}
+
+.menu_show a {
+	margin-top: 7px;
+}
+
+.menu-item {
+	margin: 10px;
+}
+
+#darkModeIcon {
+	position: fixed;
+	width: 40px;
+	height: 40px;
+	top: 10px;
+	right: 10px;
+	padding: 10px;
+	border: none;
+	cursor: pointer;
+	z-index: 99;
+	filter: drop-shadow(0 0 2px white);
+}
+
+
+
+/* Articles page d'accueil */
+#homeTitle {
+	font-size: min(3em, 9vw);
+}
+
+.articles-list {
+	display: grid;
+	align-items: center;
+	grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+.article h3 {
+	text-align: center;	
+	font-size: min(2em, 5.5vw);
+	margin: 10px;
+}
+
+.article {
+	background-color: var(--bg2);
+	border-radius: 20px;
+	padding: 10px;
+	margin: 10px;
+	box-shadow: 0 0 10px 3px rgb(115, 115, 115);
+}
+
+.article:hover {
+	background-color: var(--bg3);
+	box-shadow: 0 0 20px 5px rgb(115, 115, 115);
+	cursor: pointer;
+}
+
+.article p {
+	text-align: justify;
+	font-size: min(1.5em, 5vw);
+	margin: 10px;
+}
+
+
+
+/* Page d'articles */
+.articleContent {
+	font-size: min(4vw, 1.5em);
+}
+
+h2 {
+	font-size: min(5vw, 1.75em);
+}
+
+#articleTitle {
+	font-size: min(6vw, 2em);
+}
+
+
+/* Formulaire de contact */
+#contactFormTitle {
+	font-size: min(2.5em, 10vw);
+}
+
+#contactForm {
+	display: flex;
+	flex-direction: column;
+	grid-template-columns: minmax(300px, 1fr);
+	max-width: 300px;
+	margin: 20px auto;
+	border: 3px solid var(--bg3);
+	box-shadow: 5px 5px 10px 4px var(--bg3);
+	border-radius: 20px;
+	padding: 20px;
+	/* max-height: 50vh; */
+}
+
+#contactForm label {
+	display: block;
+	margin-bottom: 0.25rem;
+	font-weight: bold;
+	font-size: min(1.5em, 6vw);
+}
+
+#contactForm input,
+#contactForm textarea {
+	padding: 0.5rem;
+	border: none;
+	margin-bottom: 1rem;
+	border-radius: 4px;
+	background-color: var(--bg2);
+	color: var(--font-color);
+}
+
+/* #contactForm input {
+	max-height: 2vh;
+}
+
+#contactForm button {
+	max-height: 6vh;
+}
+
+#contactForm textarea {
+	max-height: 5vh;
+} */
+
+#contactForm input:focus,
+#contactForm textarea:focus {
+	background-color: var(--bg3);
+	box-shadow: 0 0 10px 2px var(--bg3);
+	outline: none;
+}
+
+#contactForm button, .btn {
+	padding: 0.5rem 1rem;
+	background-color: #007bff;
+	color: white;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+	text-align: center;
+	font-size: min(1.1em, 4vw);
+}
+
+#contactForm button:hover, .btn:hover {
+	background-color: #3b9aff;
+}
+
+#contactForm button:active, .btn:active {
+	background-color: #007bff;
+}
+
+.error {
+	color: red;
+	font-size: 0.9rem;
+	margin-top: -0.75rem;
+	margin-bottom: 0.75rem;
+}
+
+
+
+/* Modal de succès */
+.modal-overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.4);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 100;
+}
+
+.modal-container {
+	background-color: green;
+	border-radius: 0.5rem;
+	padding: 8px;
+	width: 100%;
+	max-width: min(640px, 75vw);
+	box-shadow: 3px 3px 5px 2px green;
+}
+
+.modal-content {
+	background-color: var(--bg2);
+	border-radius: 0.5rem;
+	padding: 2rem;
+}
+
+.modal-body p {
+	margin: 0;
+	text-align: center;
+}
+
+.mt-4 {
+	margin-top: 1rem;
+	text-align: center;
+}
+
+.btn {
+	font-size: 1rem;
+	margin-top: 1rem;
+}
+
+[x-cloak] {
+	display: none;
+}
