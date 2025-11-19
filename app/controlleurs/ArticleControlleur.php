@@ -16,13 +16,14 @@ class ArticleControlleur
 	public function article($articleId)
 	{
 		$articles = $this->articleModel->getArticle($articleId);
+		$commentaires = $this->articleModel->getCommentaire($articleId);
 
 		if (empty($articles)) {
             throw new Exception("L'article avec l'id $articleId n'existe pas.");
         }
 
 		$article = $articles[0]; 
-		echo $this->twig->render('article.twig', ['article' => $article]);
+		echo $this->twig->render('article.twig', ['article' => $article, 'commentaires' => $commentaires]);
 	}
 	// public function addTask($taskName)
 	// {

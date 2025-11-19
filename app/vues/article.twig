@@ -5,4 +5,14 @@
 	<h2>Date de Mise à jour : {{ article["date_mise_a_jour"] }}</h2>
 	<h3>Créé par {{ article["nom_utilisateur"] }} le {{ article["date_creation"] }}</h3>
 	<article class="articleContent">{{ article["contenu"] }}</article>
+	<hr>
+	<div class="commentaires-list">
+		{% for commentaire in commentaires %}
+			{# <article class="article" onclick="location.href='/{{ article.slug }}?id={{ article.id }}'"> #}
+			<article>
+				<h3>{{ commentaire["contenu"] }}</h3>
+				<h4>Par {{ commentaire["nom_auteur"] }} ({{ commentaire["date_commentaire"] }})</h4>
+			</article>
+		{% endfor %}
+	</div>
 {% endblock %}
