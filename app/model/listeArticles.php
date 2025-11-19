@@ -5,7 +5,7 @@ class ListeArticle
 	public function __construct()
 	{
 		$this->db = new PDO(
-			'mysql:host=localhost;dbname=blog_db',
+			'mysql:host=127.0.0.1;dbname=blog_db',
 			'root',
 			''
 		);

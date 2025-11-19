@@ -3,5 +3,5 @@
 {% block main %}
 	<h1 class="title" id="articleTitle">Article {{ article["id"] }} : {{ article["titre"] }}</h1>
 	<h2>Date de publication : {{ article["date_publication"] }}</h2>
-	<article class="articleContent">{{ article["contenu"] | raw}}</article>
+	<article class="articleContent">{{ article["contenu"] }}</article>
 {% endblock %}
