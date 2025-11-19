@@ -12,7 +12,8 @@ class ListeArticle
 	}
 	public function getArticle($articleId)
 	{
-		$query = $this->db->prepare("SELECT * FROM article WHERE id = :id");
+		$query = $this->db->prepare("SELECT a.titre, a.contenu, a.image_une, a.date_creation, a.date_mise_a_jour FROM Articles a 
+                                            JOIN Utilisateurs u ON a.utilisateur_id = u.id WHERE id = :id");
 		$query->bindParam(':id', $articleId);
 		$query->execute();
 		return $query->fetchAll(PDO::FETCH_ASSOC);
