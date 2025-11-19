@@ -5,6 +5,11 @@ You need to install twig, go to the root of the repo
 ```console
 composer install
 ```
+OR
+```console
+composer require "twig/twig:^3.0"
+composer require erusev/parsedown
+```
 To start the server, you need to start xampp first
 ```console
 cd /opt/lampp
