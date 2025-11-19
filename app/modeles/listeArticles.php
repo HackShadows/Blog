@@ -12,7 +12,7 @@ class ListeArticle
 	}
 	public function getArticle($articleId)
 	{
-		$query = $this->db->prepare("SELECT a.titre, a.contenu, a.image_une, a.date_creation, a.date_mise_a_jour, u.nom_utilisateur FROM Articles a 
+		$query = $this->db->prepare("SELECT a.id, a.titre, a.contenu, a.image_une, a.date_creation, a.date_mise_a_jour, u.nom_utilisateur FROM Articles a 
                                             JOIN Utilisateurs u ON a.utilisateur_id = u.id WHERE id = :id");
 		$query->bindParam(':id', $articleId);
 		$query->execute();
@@ -21,7 +21,7 @@ class ListeArticle
 
     public function getCommentaire($articleId)
     {
-        $query = $this->db->prepare("SELECT c.nom_auteur, c.email FROM commenatire c 
+        $query = $this->db->prepare("SELECT c.nom_auteur, c.email, c. FROM commentaire c
                                             JOIN Utilisateurs u ON a.utilisateur_id = u.id WHERE id = :id");
         $query->bindParam(':id', $articleId);
         $query->execute();
