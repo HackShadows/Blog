@@ -22,7 +22,7 @@ class ListeArticle
     public function getCommentaire($articleId)
     {
         $query = $this->db->prepare("SELECT c.nom_auteur, c.contenu, c.date_commentaire FROM Commentaires c
-                                            JOIN Articles a ON a.id = c.article_id WHERE a.id = :id AND statut = 'Approuvé'" );
+                                            JOIN Articles a ON a.id = c.article_id WHERE a.id = :id AND c.statut = 'Approuvé'" );
         $query->bindParam(':id', $articleId);
         $query->execute();
         return $query->fetchAll(PDO::FETCH_ASSOC);
