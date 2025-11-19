@@ -18,7 +18,6 @@ class ListeArticle
 		$query->execute();
         $answer = $query->fetchAll(PDO::FETCH_ASSOC);
         $Parsedown = new Parsedown();
-        print_r($answer);
         $answer[0]['contenu'] = $Parsedown->text($answer[0]['contenu']);
 		return $answer;
 	}
