@@ -100,6 +100,8 @@ CREATE TABLE `Commentaires` (
                                 PRIMARY KEY (`id`),
                                 FOREIGN KEY (`article_id`) REFERENCES `Articles`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
 --
 -- 3. INSERTION DES DONNÉES DE TEST (THEME VTT)
 --
