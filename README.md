@@ -1,12 +1,16 @@
 # Projet Web Blog
 
 
-YOu need to install twig, go to the root of the repo
+You need to install twig, go to the root of the repo
 ```console
 composer install
 ```
 To start the server, you need to start xampp first
-then type 
+```console
+cd /opt/lampp
+sudo ./xampp start
+```
+then start the local server
 ```console
 cd public
 php -S localhost:5000
