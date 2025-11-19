@@ -1,4 +1,4 @@
-<?php // app/models/listeArticles.php
+<?php // app/modeles/listeArticles.php
 class ListeArticle
 {
 	private $db;

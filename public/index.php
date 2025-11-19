@@ -1,10 +1,10 @@
 <?php
 /* inclure l'autoloader */
 require_once '../vendor/autoload.php';
-require_once '../app/controlleur/ArticleControlleur.php';
-require_once '../app/model/listeArticles.php';
+require_once '../app/controlleurs/ArticleControlleur.php';
+require_once '../app/modeles/listeArticles.php';
 /* templates chargés à partir du système de fichiers (répertoire vue) */
-$loader = new Twig\Loader\FilesystemLoader('../app/views');
+$loader = new Twig\Loader\FilesystemLoader('../app/vues');
 /* options : prod = cache dans le répertoire cache, dev = pas de cache */
 $options_prod = array('cache' => 'cache', 'autoescape' => true);
 $options_dev = array('cache' => false, 'autoescape' => true);
