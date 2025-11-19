@@ -20,7 +20,8 @@ class ListeArticle
 
 	public function getResumeArticles()
 	{
-		$query = $this->db->prepare("SELECT id, titre, contenu_resume FROM article");
+		$query = $this->db->prepare("SELECT id, titre, date_mise_a_jour FROM Articles WHERE statut = 'Publié' 
+                                            ORDER BY date_mise_a_jour DESC limit 10");
 		$query->execute();
 		return $query->fetchAll(PDO::FETCH_ASSOC);
 	}
