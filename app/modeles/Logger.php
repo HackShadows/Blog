@@ -1,10 +1,10 @@
-<?php 
+<?php // app/modeles/Logger.php
 class Logger { 
     private static ?Logger $instance = null; 
     private string $logFile; 
   
     private function __construct() { 
-        $this->logFile = __DIR__ . '/app.log'; 
+        $this->logFile = __DIR__ . '/../../public/app.log'; 
     } 
   
     public static function getInstance(): Logger { 

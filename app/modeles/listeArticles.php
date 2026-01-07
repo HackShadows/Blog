@@ -10,6 +10,7 @@ class ListeArticle
 			''
 		);
 	}
+
 	public function getArticle($articleId)
 	{
 		$query = $this->db->prepare("SELECT a.id, a.titre, a.contenu, a.image_une, a.date_creation, a.date_mise_a_jour, u.nom_utilisateur FROM Articles a 
@@ -17,9 +18,21 @@ class ListeArticle
 		$query->bindParam(':id', $articleId);
 		$query->execute();
         $answer = $query->fetchAll(PDO::FETCH_ASSOC);
-        $Parsedown = new Parsedown();
-        $answer[0]['contenu'] = $Parsedown->text($answer[0]['contenu']);
+		if (empty($answer)) return $answer;
+		$answer = $answer[0];
+		if (!empty($answer) && array_key_exists("contenu", $answer)) {
+			$Parsedown = new Parsedown();
+        	$answer['contenu'] = $Parsedown->text($answer['contenu']);
+		}
 		return $answer;
+	}
+
+	public function getArticlesURL()
+	{
+		$query = $this->db->prepare("SELECT id, slug FROM Articles WHERE statut = 'Publié'
+											ORDER BY date_mise_a_jour DESC limit 5");
+		$query->execute();
+		return $query->fetchAll(PDO::FETCH_ASSOC);
 	}
 
     public function getCommentaire($articleId)

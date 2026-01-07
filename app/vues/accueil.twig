@@ -1,6 +1,9 @@
 {% extends "base.twig" %}
 
 {% block main %}
+	{% if erreur is not null %}
+		<script type="text/javascript">window.alert("{{ erreur|escape('js') }}");</script>
+	{% endif %}
 	<h1 class="title" id="homeTitle">Bienvenue sur mon blog</h1>
 	<div class="articles-list">
 		{% for article in resumes %}
