@@ -3,8 +3,8 @@
 {% block main %}
 	<h1 class="title" id="articleTitle">Article {{ article["id"] }} : {{ article["titre"] }}</h1>
 	<article class="articleContent">{{ article["contenu"] | raw }}</article>
-	<h2>Date de Mise à jour : {{ article["date_mise_a_jour"] }}</h2>
-	<h3>Créé par {{ article["nom_utilisateur"] }} le {{ article["date_creation"] }}</h3>
+	<h3>Date de Mise à jour : {{ article["date_mise_a_jour"] }}</h3>
+	<h4>Créé par {{ article["nom_utilisateur"] }} le {{ article["date_creation"] }}</h4>
 	<hr>
 	<div class="commentaires-list">
 		{% for commentaire in commentaires %}
