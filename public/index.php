@@ -4,6 +4,7 @@ require_once '../vendor/autoload.php';
 require_once '../app/controlleurs/ArticleControlleur.php';
 require_once '../app/controlleurs/Connexion.php';
 require_once '../app/modeles/listeArticles.php';
+require_once '../app/modeles/dashboard.php';
 require_once '../app/modeles/Logger.php';
 /* templates chargés à partir du système de fichiers (répertoire vue) */
 $loader = new Twig\Loader\FilesystemLoader('../app/vues');
@@ -29,7 +30,12 @@ if (isset($_GET['id'])) {
 			$controller->index(null);
 			break;
 		case '/connexion':
-			(new Connexion($twig))->index();
+			$connexion = new Connexion($twig);
+			if (empty($_POST)) {
+				$connexion->index();
+			} else {
+				$connexion->dashboard($_POST["email"]);
+			}
 			break;
 		default:
 			http_response_code(404);

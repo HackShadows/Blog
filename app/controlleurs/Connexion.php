@@ -1,3 +1,5 @@
+
+
 <?php 
 class Connexion
 {
@@ -14,5 +16,12 @@ class Connexion
 	{
 		$this->logs->log("connexion");
 		echo $this->twig->render('connexion.twig', []);
+	}
+
+	public function dashboard($userEmail)
+	{
+		$this->logs->log("dashboard");
+		$user = (new Dashboard())->getUser($userEmail);
+		echo $this->twig->render('dashboard.twig', ['user' => $user]);
 	}
 }

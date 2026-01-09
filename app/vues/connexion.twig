@@ -2,7 +2,7 @@
 
 {% block main %}
 	<h1 class="title" id="contactFormTitle">Se connecter</h1>
-	<form name="contactForm" id="contactForm" @submit.prevent="validate">
+	<form name="contactForm" id="contactForm" @submit.prevent="validate" method="POST">
 		{# <label for="nom">Nom :</label>
 		<input type="text" id="nom" name="nom" x-model="nom">
 		<template x-if="errors.nom">
