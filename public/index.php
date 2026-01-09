@@ -2,6 +2,7 @@
 /* inclure l'autoloader */
 require_once '../vendor/autoload.php';
 require_once '../app/controlleurs/ArticleControlleur.php';
+require_once '../app/controlleurs/Connexion.php';
 require_once '../app/modeles/listeArticles.php';
 require_once '../app/modeles/Logger.php';
 /* templates chargés à partir du système de fichiers (répertoire vue) */
@@ -26,6 +27,9 @@ if (isset($_GET['id'])) {
 		case '/':
 		case '/accueil':
 			$controller->index(null);
+			break;
+		case '/connexion':
+			(new Connexion($twig))->index();
 			break;
 		default:
 			http_response_code(404);
