@@ -15,6 +15,7 @@ class Connexion
 	public function index()
 	{
 		$this->logs->log("connexion");
+        logIn();
 		echo $this->twig->render('connexion.twig', []);
 	}
 
