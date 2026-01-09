@@ -36,8 +36,12 @@ function createUser() {
         $password = $_POST['password'] ?? '';
         try {
             $db = Database::getInstance()->getConnection();
-            $stmt = $db->prepare("INSERT INTO Utilisateurs (email, nom_utilisateur, mot_de_passe, est_actif, date_inscription) VALUES (?, ?, ?, 1, CURRENT_TIMESTAMP)");
-            $stmt->execute([$email, $username, $password]);
+            $id = $db->prepare("SELECT MAX(id)+1 FROM Utilisateurs");
+            $id->execute();
+            $stmt = $db->prepare("INSERT INTO Utilisateurs (id, email, nom_utilisateur, mot_de_passe, est_actif, date_inscription) VALUES (?, ?, ?, ?, 1, CURRENT_TIMESTAMP)");
+            $stmt->execute([$id, $email, $username, $password]);
+            $stmt = $db->prepare("INSERT INTO Role_User (role_id, user_id) VALUES (3, ?)");
+            $stmt->execute([$id]);
             $logger->log("Création de  compte réussie pour {$username}");
             exit;
         } catch (PDOException $e) {
