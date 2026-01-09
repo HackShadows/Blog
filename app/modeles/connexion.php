@@ -17,9 +17,10 @@ function logIn() {
                 $session->set('user_id', $user['id']);
                 $session->set('username', $user['nom_utilisateur']);
                 $logger->log("Connexion réussie pour {$user['nom_utilisateur']}");
-                exit;
+                return true;
             } else {
                 $logger->log("Échec de connexion pour $username");
+                return false;
             }
         } catch (PDOException $e) {
             $error = "Erreur de base de données.";
