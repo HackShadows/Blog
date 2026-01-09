@@ -1,6 +1,15 @@
 {% extends "base.twig" %}
-
+{# todo affichage different selon perm
+util : ce qu'il a ecrit sous tout statut
+admin : ensemble des comm en attente et articles
+#}
 {% block main %}
-	<h1>Bienvenue, {{ user["nom_utilisateur"] }} !</h1> 
-	<p>Ceci est une page protégée.</p>
+	{% if roles['Administrateur'] %}
+		<h1> Admin </h1>
+	{% elseif roles['Éditeur'] %}
+		<h1> Editeur</h1>
+	{% elseif roles['Contributeur'] %}
+		<h1> Contributeur</h1>
+	{%  endif  %}
+	<h1> TESTTTTTTT </h1>
 {% endblock %}
