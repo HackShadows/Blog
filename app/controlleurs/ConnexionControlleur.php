@@ -37,4 +37,16 @@ class ConnexionControlleur
         echo $this->twig->render('dashboard.twig', ['userId' => $userId, 'roles' => $roles, 'listeUtilisateurs' => $listeUtilisateurs]);
 
     }
+
+    public function changerUtilisateur(){
+        $logger = Logger::getInstance();
+        $logger->log("toggleUser-entree dans fct");
+        if (isset($_POST['id'])) {
+            $logger->log("toggleUser-entree dans if");
+            $userId = intval($_POST['id']);
+
+            $dashboardModel = new Dashboard();
+            $dashboardModel->changerStatutUtilisateur($userId);
+        }
+    }
 }

@@ -30,37 +30,37 @@ $session = SessionManager::getInstance();
 $logger = Logger::getInstance();
 
 if (isset($_GET['id'])) {
-	try {
-		$ArticleControlleur->article($_GET['id']);
-	} catch (InvalidArgumentException $e) {
-		$ArticleControlleur->index($e->getMessage());
-	}
+    try {
+        $ArticleControlleur->article($_GET['id']);
+    } catch (InvalidArgumentException $e) {
+        $ArticleControlleur->index($e->getMessage());
+    }
 } else {
-	$uri = $_SERVER['REQUEST_URI'];
-	$logger->log($uri);
-	switch ($uri) {
-		case '/':
-		case '/accueil':
-			$ArticleControlleur->index(null);
-			break;
-		case '/connexion':
-			if (empty($_POST)) {
-				$ConnexionControlleur->index();
-			} else {
-                if($connexion->logIn()){
+    $uri = $_SERVER['REQUEST_URI'];
+    $logger->log($uri);
+    switch ($uri) {
+        case '/':
+        case '/accueil':
+            $ArticleControlleur->index(null);
+            break;
+        case '/connexion':
+            if (empty($_POST)) {
+                $ConnexionControlleur->index();
+            } else {
+                if ($connexion->logIn()) {
                     $ConnexionControlleur->dashboard($_POST["email"]);
-                    print_r($session->get('user_id'));
-                    $logger->log("L'utilisateur connecté est ".$session->get('user_id'));
-
-                }
-                else{
+                    $logger->log("L'utilisateur connecté est " . $session->get('user_id'));
+                } else {
                     echo 'Mauvais email/mot de passe';
                     $ConnexionControlleur->index();
                 }
-			}
-			break;
-		default:
-			http_response_code(404);
-			break;
-	}
+            }
+            break;
+        case '/changerUtilisateur':
+            $ConnexionControlleur->changerUtilisateur();
+            break;
+        default:
+            http_response_code(404);
+            break;
+    }
 }

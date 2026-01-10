@@ -17,7 +17,7 @@ class Connexion
 			$username = $_POST['email'] ?? '';
 			$password = $_POST['password'] ?? '';
 			try {
-				$stmt = $this->db->prepare("SELECT * FROM Utilisateurs WHERE email = ?");
+				$stmt = $this->db->prepare("SELECT * FROM Utilisateurs WHERE email = ? AND est_actif = 1");
 				$stmt->execute([$username]);
 				$user = $stmt->fetch(PDO::FETCH_ASSOC);
 				if ($user && password_verify($password, $user['mot_de_passe'])) {

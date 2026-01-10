@@ -17,4 +17,9 @@ class Dashboard
 		if (empty($answer)) return $answer;
 		return $answer[0];
 	}
+
+    public function changerStatutUtilisateur($utilisateurId){
+        $query = $this->db->prepare("UPDATE Utilisateurs SET est_actif = 1-est_actif WHERE id = ?" );
+        return $query->execute([$utilisateurId]);
+    }
 }

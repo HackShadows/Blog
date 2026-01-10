@@ -6,14 +6,62 @@ admin : ensemble des comm en attente et articles
 {% block main %}
 	{% if roles['Administrateur'] %}
 		<h1> Admin </h1>
-		{% for utilisateur in listeUtilisateurs %}
-			<div> {{ utilisateur['id'] }}, {{ utilisateur['nom_utilisateur'] }}, {{ utilisateur['email'] }}, {{ utilisateur['date_inscription'] }}</div>
-		{% endfor %}
+		<table>
+			<thead>
+			<tr>
+				<th>
+					ID
+				</th>
+				<th>
+					Pseudo
+				</th>
+				<th>
+					E-mail
+				</th>
+				<th>
+					Date d'inscription
+				</th>
+				<th>
+					Est Actif ?
+				</th>
+			</tr>
+			</thead>
+			{% for utilisateur in listeUtilisateurs %}
+				<tr x-data="{ estActif: {{ utilisateur.est_actif }} }">
+					<td>
+						{{ utilisateur['id'] }}
+					</td>
+					<td>
+						{{ utilisateur['nom_utilisateur'] }}
+					</td>
+					<td>
+						{{ utilisateur['email'] }}
+					</td>
+					<td>
+						{{ utilisateur['date_inscription'] }}
+					</td>
+					<td>
+                        <span x-text="estActif ? 'Actif' : 'Inactif'" :class="estActif ? 'badge bg-success' : 'badge bg-secondary'">
+                        </span>
+					</td>
+					<td>
+						<button type="button" class="btn btn-sm" :class="estActif ? 'btn-warning' : 'btn-success'"
+								@click="let donnees = new FormData();
+                                        donnees.append('id', {{ utilisateur.id }});
+                                        fetch('changerUtilisateur', {method: 'POST', body: donnees});
+                                        estActif = !estActif;"
+								x-text="estActif ? 'Désactiver' : 'Activer'">
+						</button>
+					</td>
+				</tr>
+			{% endfor %}
+		</table>
+
 	{% endif %}
 	{% if roles['Éditeur'] %}
 		<h1> Editeur</h1>
 	{% endif %}
 	{% if roles['Contributeur'] %}
 		<h1> Contributeur</h1>
-	{%  endif  %}
+	{% endif %}
 {% endblock %}
