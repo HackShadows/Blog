@@ -2,6 +2,7 @@
 
 <?php
 require_once __DIR__ . "/../modeles/permissions.php";
+require_once __DIR__ . "/../modeles/listeUtilisateurs.php";
 class Connexion
 {
 	private $twig;
@@ -23,11 +24,19 @@ class Connexion
 	{
         $session = SessionManager::getInstance();
 		$this->logs->log("dashboard");
-//		$user = (new Dashboard())->getUser($userEmail);
         $userId = $session->get('user_id');
 		$roles = ['Administrateur' => hasRole('Administrateur'), 'Contributeur' => hasRole('Contributeur'), 'Éditeur' => hasRole('Éditeur')];
-		print_r($userId);
-		print_r($roles);
-		echo $this->twig->render('dashboard.twig', ['userId' => $userId, 'roles' => $roles]);
-	}
+        $listeUtilisateurs = null;
+        if ($roles['Administrateur']){
+            $listeUtilisateurs = (new listeUtilisateurs())->getUtilisateurs();
+        }
+        if ($roles['Contributeur']){
+
+        }
+        if ($roles['Editeur']){
+
+        }
+        echo $this->twig->render('dashboard.twig', ['userId' => $userId, 'roles' => $roles, 'listeUtilisateurs' => $listeUtilisateurs]);
+
+    }
 }

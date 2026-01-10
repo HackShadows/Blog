@@ -6,6 +6,9 @@ admin : ensemble des comm en attente et articles
 {% block main %}
 	{% if roles['Administrateur'] %}
 		<h1> Admin </h1>
+		{% for utilisateur in listeUtilisateurs %}
+			<div> {{ utilisateur['id'] }}, {{ utilisateur['nom_utilisateur'] }}, {{ utilisateur['email'] }}, {{ utilisateur['date_inscription'] }}</div>
+		{% endfor %}
 	{% endif %}
 	{% if roles['Éditeur'] %}
 		<h1> Editeur</h1>
