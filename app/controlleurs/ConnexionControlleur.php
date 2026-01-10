@@ -23,19 +23,57 @@ class ConnexionControlleur
         $session = SessionManager::getInstance();
 		$this->logs->log("dashboard");
         $userId = $session->get('user_id');
-		$roles = ['Administrateur' => $this->permissions->hasRole('Administrateur'), 'Contributeur' => $this->permissions->hasRole('Contributeur'), 'Éditeur' => $this->permissions->hasRole('Éditeur')];
-        $listeUtilisateurs = null;
-        if ($roles['Administrateur']){
-            $listeUtilisateurs = (new Utilisateurs())->getUtilisateurs();
-        }
-        if ($roles['Contributeur']){
 
+		$rolesConnecte = ['Administrateur' => $this->permissions->hasRole('Administrateur'), 'Contributeur' => $this->permissions->hasRole('Contributeur'), 'Éditeur' => $this->permissions->hasRole('Éditeur')];
+        $dashboardModel = new Dashboard();
+        $listeUtilisateurs = [];
+        $tousLesRoles = [];
+        if ($rolesConnecte['Administrateur']) {
+            $listeUtilisateurs = $dashboardModel->getUtilisateursAvecRoles();
+            $tousLesRoles = $dashboardModel->getAllRoles();
         }
-        if ($roles['Editeur']){
+        echo $this->twig->render('dashboard.twig', [
+            'userId' => $userId,
+            'roles' => $rolesConnecte,
+            'listeUtilisateurs' => $listeUtilisateurs,
+            'tousLesRoles' => $tousLesRoles
+        ]);
+    }
 
+    public function majRoles() {
+        // On utilise le logger de la classe
+        $this->logs->log("majRoles: Début du traitement");
+
+        // 1. Vérification de la permission (avec l'instance de la classe)
+        if ($this->permissions->hasPermission('utilisateur_gerer')) {
+
+            // 2. Vérification des données POST
+            if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['user_id'])) {
+                $userId = $_POST['user_id'];
+                $roles = $_POST['roles'] ?? []; // Tableau vide si aucun rôle coché
+
+                $this->logs->log("majRoles: Mise à jour demandée pour User ID " . $userId);
+
+                $dashboardModel = new Dashboard();
+                $result = $dashboardModel->updateRoles($userId, $roles);
+
+                if($result) {
+                    $this->logs->log("majRoles: Succès updateRoles");
+                } else {
+                    $this->logs->log("majRoles: Erreur retournée par updateRoles");
+                }
+
+            } else {
+                $this->logs->log("majRoles: Erreur - Pas de POST ou user_id manquant");
+            }
+        } else {
+            $this->logs->log("majRoles: Erreur - Permission 'utilisateur_gerer' refusée");
         }
-        echo $this->twig->render('dashboard.twig', ['userId' => $userId, 'roles' => $roles, 'listeUtilisateurs' => $listeUtilisateurs]);
 
+        // 3. REDIRECTION SYSTÉMATIQUE (Empêche la page blanche)
+        // On redirige vers /connexion qui gère intelligemment le retour au dashboard
+        header('Location: /connexion');
+        exit;
     }
 
     public function changerUtilisateur(){

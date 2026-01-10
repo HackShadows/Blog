@@ -71,6 +71,9 @@ if (isset($_GET['id'])) {
             $connexion->logOut();
             $ArticleControlleur->index(null);
             break;
+        case '/majRoles':
+            $ConnexionControlleur->majRoles();
+            break;
         default:
             http_response_code(404);
             break;

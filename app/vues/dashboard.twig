@@ -5,59 +5,126 @@ admin : ensemble des comm en attente et articles
 #}
 {% block main %}
 	{% if roles['Administrateur'] %}
-		<h1> Admin </h1>
-		<table>
-			<thead>
-			<tr>
-				<th>
-					ID
-				</th>
-				<th>
-					Pseudo
-				</th>
-				<th>
-					E-mail
-				</th>
-				<th>
-					Date d'inscription
-				</th>
-				<th>
-					Est Actif ?
-				</th>
-			</tr>
-			</thead>
-			{% for utilisateur in listeUtilisateurs %}
-				<tr x-data="{ estActif: {{ utilisateur.est_actif }} }">
-					<td>
-						{{ utilisateur['id'] }}
-					</td>
-					<td>
-						{{ utilisateur['nom_utilisateur'] }}
-					</td>
-					<td>
-						{{ utilisateur['email'] }}
-					</td>
-					<td>
-						{{ utilisateur['date_inscription'] }}
-					</td>
-					<td>
-                        <span x-text="estActif ? 'Actif' : 'Inactif'" :class="estActif ? 'badge bg-success' : 'badge bg-secondary'">
+		<div x-data="{modalOpen : false, userToEdit: null, userRoles: []}">
+			<h1> Admin </h1>
+			<table>
+				<thead>
+				<tr>
+					<th>
+						ID
+					</th>
+					<th>
+						Pseudo
+					</th>
+					<th>
+						E-mail
+					</th>
+					<th>
+						Date d'inscription
+					</th>
+					<th>
+						Est Actif ?
+					</th>
+				</tr>
+				</thead>
+				{% for utilisateur in listeUtilisateurs %}
+					<tr x-data="{ estActif: {{ utilisateur.est_actif }} }">
+						<td>
+							{{ utilisateur['id'] }}
+						</td>
+						<td>
+							{{ utilisateur['nom_utilisateur'] }}
+						</td>
+						<td>
+							{{ utilisateur['email'] }}
+						</td>
+						<td>
+							{{ utilisateur['date_inscription'] }}
+						</td>
+						<td>
+                        <span x-text="estActif ? 'Actif' : 'Inactif'"
+							  :class="estActif ? 'badge bg-success' : 'badge bg-secondary'">
                         </span>
-					</td>
-					<td>
-						<button type="button" class="btn btn-sm" :class="estActif ? 'btn-warning' : 'btn-success'"
-								@click="let donnees = new FormData();
+						</td>
+						<td>
+							<button type="button" class="btn btn-sm" :class="estActif ? 'btn-warning' : 'btn-success'"
+									@click="let donnees = new FormData();
                                         donnees.append('id', {{ utilisateur.id }});
                                         fetch('changerUtilisateur', {method: 'POST', body: donnees});
                                         estActif = !estActif;"
-								x-text="estActif ? 'Désactiver' : 'Activer'">
-						</button>
-					</td>
-				</tr>
-			{% endfor %}
-		</table>
+									x-text="estActif ? 'Désactiver' : 'Activer'">
+							</button>
+						</td>
+						<td>
+							{% for role in utilisateur.roles %}
+								<span class="badge bg-info text-dark">{{ role.nom_role }}</span>
+							{% else %}
+								<span class="badge bg-secondary">Aucun</span>
+							{% endfor %}
+						</td>
+						<td>
+							<button class="btn btn-primary btn-sm"
+									@click="
+                                    modalOpen = true;
+                                    userToEdit = {{ utilisateur.id }};
+                                    userRoles = [
+                                        {% for r in utilisateur.roles %}
+                                            {{ r.id }},
+                                        {% endfor %}
+                                    ];
+                                ">
+								Modifier Rôles
+							</button>
+						</td>
+					</tr>
+				{% endfor %}
+			</table>
 
+			<div class="modal" x-show="modalOpen" x-cloak>
+				<div class="modal-dialog">
+					<div class="modal-content" @click.away="modalOpen = false">
+						<div class="modal-header">
+							<h5 class="modal-title">Attribuer des rôles</h5>
+						</div>
+
+						<form action="/majRoles" method="POST">
+							<div class="modal-body">
+								<input type="hidden" name="user_id" :value="userToEdit">
+								<p class="mb-3">Sélectionnez les rôles (plusieurs possibles) :</p>
+
+								{# Liste de TOUS les rôles disponibles #}
+								<div class="list-group">
+									{% for role in tousLesRoles %}
+										<label class="list-group-item d-flex gap-2">
+											{# Checkbox avec name="roles[]" pour envoyer un tableau à PHP #}
+											<input class="form-check-input flex-shrink-0"
+												   type="checkbox"
+												   name="roles[]"
+												   value="{{ role.id }}"
+												   :checked="userRoles.includes({{ role.id }})">
+											<span>
+                                        {{ role.nom_role }}
+                                        <small class="d-block text-muted">{{ role.description }}</small>
+                                    </span>
+										</label>
+									{% endfor %}
+								</div>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-secondary" @click="modalOpen = false">Annuler
+								</button>
+								<button type="submit" class="btn btn-success">Enregistrer</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
 	{% endif %}
+
+
+
+
 	{% if roles['Éditeur'] %}
 		<h1> Editeur</h1>
 	{% endif %}

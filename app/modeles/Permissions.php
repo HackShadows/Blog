@@ -17,11 +17,11 @@ class Permissions
 		try {
 			$stmt = $this->db->prepare("SELECT DISTINCT p.id, u.nom_utilisateur 
 										FROM Permissions p 
-										JOIN Role_Permission rp ON p.id = rp.role_id
+										JOIN Role_Permission rp ON p.id = rp.permission_id
 										JOIN Role_User ru ON ru.role_id = rp.role_id 
 										JOIN Utilisateurs u ON u.id = ru.user_id
 										WHERE p.nom_permission = ? and u.id = ?;");
-			$stmt->execute([$permissionName, $this->session['user_id']]);
+			$stmt->execute([$permissionName, $this->session->get('user_id')]);
 			$boolean = $stmt->fetch(PDO::FETCH_ASSOC);
 			if ($boolean) {
 				return true;

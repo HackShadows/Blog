@@ -22,4 +22,55 @@ class Dashboard
         $query = $this->db->prepare("UPDATE Utilisateurs SET est_actif = 1-est_actif WHERE id = ?" );
         return $query->execute([$utilisateurId]);
     }
+
+    public function getAllRoles(){
+        $query = $this->db->prepare("SELECT * FROM Roles");
+        $query->execute();
+        return $query->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getUtilisateursAvecRoles() {
+        $users = $this->db->query("SELECT * FROM Utilisateurs")->fetchAll(PDO::FETCH_ASSOC);
+
+        foreach ($users as &$user) {
+            $stmt = $this->db->prepare("
+                SELECT r.id, r.nom_role, r.description 
+                FROM Roles r 
+                JOIN Role_User ru ON r.id = ru.role_id 
+                WHERE ru.user_id = ?
+            ");
+            $stmt->execute([$user['id']]);
+            $user['roles'] = $stmt->fetchAll(PDO::FETCH_ASSOC); // Ajoute le tableau des rôles
+        }
+
+        return $users;
+    }
+
+    public function updateRoles($userId, $rolesIds) {
+        $logger = Logger::getInstance();
+        $logger->log("entree dans updateRoles");
+        try {
+            $this->db->beginTransaction();
+            $del = $this->db->prepare("DELETE FROM Role_User WHERE user_id = ?");
+            $del->execute([$userId]);
+            $logger->log("id a modifier".$userId);
+            $logger->log("roles ids ".$rolesIds);
+            if (!empty($rolesIds) && is_array($rolesIds)) {
+                $logger->log("entree dans for");
+                $insert = $this->db->prepare("INSERT INTO Role_User (user_id, role_id) VALUES (?, ?)");
+                foreach ($rolesIds as $roleId) {
+                    $insert->execute([$userId, $roleId]);
+                    $logger->log("ajout d'un role " . $roleId);
+                }
+            }
+            $this->db->commit();
+            return true;
+        } catch (Exception $e) {
+            $this->db->rollBack();
+
+            $logger->log("erreur de bdd pendant update role");
+            return false;
+        }
+    }
+
 }
