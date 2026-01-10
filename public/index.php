@@ -6,6 +6,7 @@ require_once '../app/controlleurs/Connexion.php';
 require_once '../app/modeles/listeArticles.php';
 require_once '../app/modeles/dashboard.php';
 require_once '../app/modeles/Logger.php';
+require_once '../app/modeles/connexion.php';
 /* templates chargés à partir du système de fichiers (répertoire vue) */
 $loader = new Twig\Loader\FilesystemLoader('../app/vues');
 /* options : prod = cache dans le répertoire cache, dev = pas de cache */
@@ -15,6 +16,8 @@ $options_dev = array('cache' => false, 'autoescape' => true);
 $twig = new Twig\Environment($loader);
 
 $controller = new ArticleControlleur($twig);
+$session = SessionManager::getInstance();
+$logger = Logger::getInstance();
 if (isset($_GET['id'])) {
 	try {
 		$controller->article($_GET['id']);
@@ -34,7 +37,16 @@ if (isset($_GET['id'])) {
 			if (empty($_POST)) {
 				$connexion->index();
 			} else {
-				$connexion->dashboard($_POST["email"]);
+                if(logIn()){
+                    $connexion->dashboard($_POST["email"]);
+                    print_r($session->get('user_id'));
+                    $logger->log("L'utilisateur connecté est ".$session->get('user_id'));
+
+                }
+                else{
+                    echo 'Mauvais email/mot de passe';
+                    $connexion->index();
+                }
 			}
 			break;
 		default:

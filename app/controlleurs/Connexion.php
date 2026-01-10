@@ -21,11 +21,13 @@ class Connexion
 
 	public function dashboard($userEmail)
 	{
+        $session = SessionManager::getInstance();
 		$this->logs->log("dashboard");
-		$user = (new Dashboard())->getUser($userEmail);
-		$roles = ['Administrateur' => hasRole('Administrateur'), 'Contributeur' => hasRole('Contributeur'), 'Éditeur' => hasRole('	Éditeur')];
-		print_r($user);
+//		$user = (new Dashboard())->getUser($userEmail);
+        $userId = $session->get('user_id');
+		$roles = ['Administrateur' => hasRole('Administrateur'), 'Contributeur' => hasRole('Contributeur'), 'Éditeur' => hasRole('Éditeur')];
+		print_r($userId);
 		print_r($roles);
-		echo $this->twig->render('dashboard.twig', ['user' => $user]);
+		echo $this->twig->render('dashboard.twig', ['userId' => $userId, 'roles' => $roles]);
 	}
 }

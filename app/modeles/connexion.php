@@ -3,6 +3,7 @@ require_once 'SessionManager.php';
 require_once 'Logger.php';
 
 function logIn() {
+
     $session = SessionManager::getInstance();
     $logger = Logger::getInstance();
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -13,9 +14,10 @@ function logIn() {
             $stmt = $db->prepare("SELECT * FROM Utilisateurs WHERE email = ?");
             $stmt->execute([$username]);
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
-            if ($user && password_verify($password, $user['password_hash'])) {
+            if ($user && password_verify($password, $user['mot_de_passe'])) {
                 $session->set('user_id', $user['id']);
                 $session->set('username', $user['nom_utilisateur']);
+                print_r($session->get('user_id'));
                 $logger->log("Connexion réussie pour {$user['nom_utilisateur']}");
                 return true;
             } else {

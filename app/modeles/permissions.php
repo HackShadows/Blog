@@ -38,6 +38,7 @@ function hasRole($roleName){
 									WHERE r.nom_role = ? and u.id = ?;");
 		$stmt->execute([$roleName, $session->get('user_id')]);
 		$boolean = $stmt->fetch(PDO::FETCH_ASSOC);
+        echo '<br>';
 		if ($boolean) {
 			return true;
 		} else {

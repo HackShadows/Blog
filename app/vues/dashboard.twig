@@ -6,10 +6,11 @@ admin : ensemble des comm en attente et articles
 {% block main %}
 	{% if roles['Administrateur'] %}
 		<h1> Admin </h1>
-	{% elseif roles['Éditeur'] %}
+	{% endif %}
+	{% if roles['Éditeur'] %}
 		<h1> Editeur</h1>
-	{% elseif roles['Contributeur'] %}
+	{% endif %}
+	{% if roles['Contributeur'] %}
 		<h1> Contributeur</h1>
 	{%  endif  %}
-	<h1> TESTTTTTTT </h1>
 {% endblock %}
