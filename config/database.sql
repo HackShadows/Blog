@@ -104,15 +104,10 @@ CREATE TABLE `Commentaires` (
 
 --
 -- 3. INSERTION DES DONNÉES DE TEST (THEME VTT)
---
--- Utilisateurs (Mot de passe 'password' hashé avec bcrypt pour l'exemple)
--- Le hash réel dépendra de votre implémentation PHP.
--- Ceci est un hash de démonstration pour 'test'
-SET @HASHED_PASSWORD ='$2y$10$Q7iR7/h7Gq6yRzW2gP0pT.0.1oQ5t4T8W0y5fG8E7C8zM7/V2C9a'; -- Hash pour le mot de passe 'vttadmin'
 INSERT INTO `Utilisateurs` (`id`, `nom_utilisateur`, `email`, `mot_de_passe`) VALUES
-(1, 'AdminVTT', 'admin@vtt.com', @HASHED_PASSWORD),
-(2, 'EditeurTrail', 'editeur@vtt.com', @HASHED_PASSWORD),
-(3, 'ContributeurRando', 'contributeur@vtt.com', @HASHED_PASSWORD);
+(1, 'AdminVTT', 'admin@vtt.com', '$2y$10$bDW2f9DK6/Oev8BvkkahceHEAjyVyp1FLaRJjkOb2MIv1s1C/Da2.'), -- mdp 'vttadmin'
+(2, 'EditeurTrail', 'editeur@vtt.com', '$2y$10$ToKjk1DxHGZ8u8mRWgPVLOgiWqSwVEErwQiHMqN4ib9YaCLlmnkiO'), -- mdp 'vttadmin'
+(3, 'ContributeurRando', 'contributeur@vtt.com', '$2y$10$.xyDiH.mO3YrJHuwykcp6.3UztTrSpWnJGRZ3mNtkEU2oiEwiLm4e'); -- mdp 'vttadmin'
       -- Rôles
 INSERT INTO `Roles` (`id`, `nom_role`, `description`) VALUES
                                                           (1, 'Administrateur', 'Accès complet au tableau de bord et à la gestion des utilisateurs.'),
