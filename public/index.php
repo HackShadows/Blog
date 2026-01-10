@@ -9,8 +9,10 @@ require_once '../app/modeles/Articles.php';
 require_once '../app/modeles/Dashboard.php';
 require_once '../app/modeles/Logger.php';
 require_once '../app/modeles/Connexion.php';
-require_once '../modeles/Permissions.php';
-require_once '../modeles/Utilisateurs.php';
+require_once '../app/modeles/Permissions.php';
+require_once '../app/modeles/Utilisateurs.php';
+require_once '../app/modeles/Database.php';
+require_once '../app/modeles/SessionManager.php';
 
 /* templates chargés à partir du système de fichiers (répertoire vue) */
 $loader = new Twig\Loader\FilesystemLoader('../app/vues');
