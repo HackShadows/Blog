@@ -37,6 +37,12 @@ class Connexion
 		}
 	}
 
+    public function logOut() {
+        $this->logger->log("Deconnexion de ".$this->session->get('username'));
+        $this->session->set('user_id', null);
+        $this->session->set('username', null);
+    }
+
 	public function createUser() {
 		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			$email = $_POST['email'] ?? '';

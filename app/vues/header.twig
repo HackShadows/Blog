@@ -19,8 +19,12 @@
 				{% endfor %}
 			</div>
 		</div>
-		<a href="/connexion" class="menu-item">Connexion</a>
-		<img src="../../images/lune.png" alt="Lune" id="darkModeIcon">
+		{% if session.get('user_id') is defined and session.get('user_id') is not empty %}
+			<a href="/connexion" class="menu-item">Dashboard</a>
+			<a href="/deconnexion" class="menu-item">Déconnexion</a>
+		{% else %}
+			<a href="/connexion" class="menu-item">Connexion</a>
+		{% endif %}		<img src="../../images/lune.png" alt="Lune" id="darkModeIcon">
 		
 		{# <!-- Sidebar -->
 		<div class="sidebar" x-show="sidebarOpen" x-cloak @click.away="sidebarOpen = false" x-transition>

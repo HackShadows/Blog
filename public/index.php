@@ -22,13 +22,12 @@ $options_dev = array('cache' => false, 'autoescape' => true);
 /* stocker la configuration */
 $twig = new Twig\Environment($loader);
 
-
 $ArticleControlleur = new ArticleControlleur($twig);
 $ConnexionControlleur = new ConnexionControlleur($twig);
 $connexion = new Connexion();
 $session = SessionManager::getInstance();
+$twig->addGlobal('session', $session);
 $logger = Logger::getInstance();
-
 if (isset($_GET['id'])) {
     try {
         $ArticleControlleur->article($_GET['id']);
@@ -44,20 +43,33 @@ if (isset($_GET['id'])) {
             $ArticleControlleur->index(null);
             break;
         case '/connexion':
-            if (empty($_POST)) {
-                $ConnexionControlleur->index();
-            } else {
+            $userId = $session->get('user_id');
+            $logger->log("ID Session actuel : " . $userId);
+            if (!empty($userId)) {
+                $logger->log("Utilisateur déjà connecté -> Redirection Dashboard");
+                $userEmail = $session->get('email') ?? '';
+                $ConnexionControlleur->dashboard($userEmail);
+            } elseif (!empty($_POST)) {
+                $logger->log("Tentative de connexion (POST)");
                 if ($connexion->logIn()) {
+                    $logger->log("Connexion réussie pour " . $_POST['email']);
                     $ConnexionControlleur->dashboard($_POST["email"]);
-                    $logger->log("L'utilisateur connecté est " . $session->get('user_id'));
                 } else {
+                    $logger->log("Echec connexion");
                     echo 'Mauvais email/mot de passe';
                     $ConnexionControlleur->index();
                 }
+            } else {
+                $logger->log("Affichage formulaire connexion");
+                $ConnexionControlleur->index();
             }
             break;
         case '/changerUtilisateur':
             $ConnexionControlleur->changerUtilisateur();
+            break;
+        case '/deconnexion':
+            $connexion->logOut();
+            $ArticleControlleur->index(null);
             break;
         default:
             http_response_code(404);
