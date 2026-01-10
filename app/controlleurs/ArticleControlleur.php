@@ -1,4 +1,4 @@
-<?php 
+<?php // app/controlleurs/ArticleControlleur.php
 class ArticleControlleur
 {
 	private $articleModel;
@@ -8,7 +8,7 @@ class ArticleControlleur
 
 	public function __construct(Twig\Environment $twig)
 	{
-		$this->articleModel = new ListeArticle();
+		$this->articleModel = new Articles();
 		$this->logs = Logger::getInstance();
 		$this->twig = $twig;
 		$this->listeURLArticles = $this->articleModel->getArticlesURL();

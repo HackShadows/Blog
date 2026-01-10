@@ -1,14 +1,11 @@
-<?php
-
-class listeUtilisateurs {
+<?php // app/modeles/Utilisateurs.php
+class Utilisateurs 
+{
     private $db;
+
     public function __construct()
     {
-        $this->db = new PDO(
-            'mysql:host=127.0.0.1;dbname=blog_db',
-            'root',
-            ''
-        );
+        $this->db = Database::getInstance()->getConnection();
     }
 
     public function getUtilisateur($utilisateurId)

@@ -1,5 +1,6 @@
 <?php // app/modeles/Logger.php
-class Logger { 
+class Logger 
+{ 
     private static ?Logger $instance = null; 
     private string $logFile; 
   

@@ -1,17 +1,15 @@
-
-
-<?php
-require_once __DIR__ . "/../modeles/permissions.php";
-require_once __DIR__ . "/../modeles/listeUtilisateurs.php";
-class Connexion
+<?php // app/controlleurs/ConnexionControlleur.php
+class ConnexionControlleur
 {
 	private $twig;
 	private $logs;
+	private $permissions;
 
 	public function __construct(Twig\Environment $twig)
 	{
 		$this->logs = Logger::getInstance();
 		$this->twig = $twig;
+		$this->permissions = new Permissions();
 	}
 
 	public function index()
@@ -25,10 +23,10 @@ class Connexion
         $session = SessionManager::getInstance();
 		$this->logs->log("dashboard");
         $userId = $session->get('user_id');
-		$roles = ['Administrateur' => hasRole('Administrateur'), 'Contributeur' => hasRole('Contributeur'), 'Éditeur' => hasRole('Éditeur')];
+		$roles = ['Administrateur' => $this->permissions->hasRole('Administrateur'), 'Contributeur' => $this->permissions->hasRole('Contributeur'), 'Éditeur' => $this->permissions->hasRole('Éditeur')];
         $listeUtilisateurs = null;
         if ($roles['Administrateur']){
-            $listeUtilisateurs = (new listeUtilisateurs())->getUtilisateurs();
+            $listeUtilisateurs = (new Utilisateurs())->getUtilisateurs();
         }
         if ($roles['Contributeur']){
 

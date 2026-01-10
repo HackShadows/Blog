@@ -1,4 +1,4 @@
-<?php 
+<?php // app/modeles/Logout.php
 require_once 'SessionManager.php'; 
 require_once 'Logger.php'; 
   

@@ -1,30 +1,11 @@
-<?php 
-// require_once 'SessionManager.php'; 
-// require_once 'Logger.php'; 
-  
-// $session = SessionManager::getInstance(); 
-// $logger = Logger::getInstance(); 
-  
-// if (!$session->get('user_id')) { 
-//     header('Location: index.php'); 
-//     exit; 
-// } 
-  
-// $username = $session->get('username'); 
-// $logger->log("Accès au dashboard par $username"); 
-?>
-
-<?php // app/modeles/dashboard.php
+<?php // app/modeles/Dashboard.php
 class Dashboard
 {
 	private $db;
+	
 	public function __construct()
 	{
-		$this->db = new PDO(
-			'mysql:host=127.0.0.1;dbname=blog_db',
-			'root',
-			''
-		);
+		$this->db = Database::getInstance()->getConnection();
 	}
 
 	public function getUser($userEmail)

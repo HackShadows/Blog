@@ -1,12 +1,17 @@
 <?php
 /* inclure l'autoloader */
 require_once '../vendor/autoload.php';
+/* inclure les controlleurs */
 require_once '../app/controlleurs/ArticleControlleur.php';
-require_once '../app/controlleurs/Connexion.php';
-require_once '../app/modeles/listeArticles.php';
-require_once '../app/modeles/dashboard.php';
+require_once '../app/controlleurs/ConnexionControlleur.php';
+/* inclure les modèles */
+require_once '../app/modeles/Articles.php';
+require_once '../app/modeles/Dashboard.php';
 require_once '../app/modeles/Logger.php';
-require_once '../app/modeles/connexion.php';
+require_once '../app/modeles/Connexion.php';
+require_once '../modeles/Permissions.php';
+require_once '../modeles/Utilisateurs.php';
+
 /* templates chargés à partir du système de fichiers (répertoire vue) */
 $loader = new Twig\Loader\FilesystemLoader('../app/vues');
 /* options : prod = cache dans le répertoire cache, dev = pas de cache */
@@ -15,37 +20,40 @@ $options_dev = array('cache' => false, 'autoescape' => true);
 /* stocker la configuration */
 $twig = new Twig\Environment($loader);
 
-$controller = new ArticleControlleur($twig);
+
+$ArticleControlleur = new ArticleControlleur($twig);
+$ConnexionControlleur = new ConnexionControlleur($twig);
+$connexion = new Connexion();
 $session = SessionManager::getInstance();
 $logger = Logger::getInstance();
+
 if (isset($_GET['id'])) {
 	try {
-		$controller->article($_GET['id']);
+		$ArticleControlleur->article($_GET['id']);
 	} catch (InvalidArgumentException $e) {
-		$controller->index($e->getMessage());
+		$ArticleControlleur->index($e->getMessage());
 	}
 } else {
 	$uri = $_SERVER['REQUEST_URI'];
-	Logger::getInstance()->log($uri);
+	$logger->log($uri);
 	switch ($uri) {
 		case '/':
 		case '/accueil':
-			$controller->index(null);
+			$ArticleControlleur->index(null);
 			break;
 		case '/connexion':
-			$connexion = new Connexion($twig);
 			if (empty($_POST)) {
-				$connexion->index();
+				$ConnexionControlleur->index();
 			} else {
-                if(logIn()){
-                    $connexion->dashboard($_POST["email"]);
+                if($connexion->logIn()){
+                    $ConnexionControlleur->dashboard($_POST["email"]);
                     print_r($session->get('user_id'));
                     $logger->log("L'utilisateur connecté est ".$session->get('user_id'));
 
                 }
                 else{
                     echo 'Mauvais email/mot de passe';
-                    $connexion->index();
+                    $ConnexionControlleur->index();
                 }
 			}
 			break;

@@ -1,14 +1,11 @@
-<?php // app/modeles/listeArticles.php
-class ListeArticle
+<?php // app/modeles/Articles.php
+class Articles
 {
 	private $db;
+	
 	public function __construct()
 	{
-		$this->db = new PDO(
-			'mysql:host=127.0.0.1;dbname=blog_db',
-			'root',
-			''
-		);
+		$this->db = Database::getInstance()->getConnection();
 	}
 
 	public function getArticle($articleId)

@@ -1,5 +1,6 @@
-<?php 
-class SessionManager { 
+<?php // app/modeles/SessionManager.php
+class SessionManager 
+{ 
     private static ?SessionManager $instance = null; 
   
     private function __construct() { 
