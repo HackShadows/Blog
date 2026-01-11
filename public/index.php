@@ -101,10 +101,10 @@ switch ($uri) {
     case '/supprimerArticle':
         $ConnexionControlleur->supprimerArticle();
         break;
-        case '/changerStatutCommentaire':
-            $ConnexionControlleur->changerStatutCommentaire();
-            break;
-    
+    case '/changerStatutCommentaire':
+        $ConnexionControlleur->changerStatutCommentaire();
+        break;
+
     default:
         if (isset($_GET['id'])) {
             try {
