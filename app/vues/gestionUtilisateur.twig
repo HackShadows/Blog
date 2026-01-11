@@ -1,134 +1,166 @@
-<div x-data="{modalOpen : false, userToEdit: null, userRoles: [], openModal(id, roles) {
+<hr class="my-5">
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Gestion des Utilisateurs</h2>
+</div>
+
+<div x-data="{
+    modalOpen: false, 
+    userToEdit: null, 
+    userRoles: [], 
+    openModal(id, roles) {
         this.userToEdit = id;
         this.userRoles = roles;
         this.modalOpen = true;
-    }}">
-	<table>
-		<thead>
-		<tr>
-			<th>
-				ID
-			</th>
-			<th>
-				Pseudo
-			</th>
-			<th>
-				E-mail
-			</th>
-			<th>
-				Date d'inscription
-			</th>
-			<th>
-				Est Actif ?
-			</th>
-		</tr>
-		</thead>
-		{% for utilisateur in listeUtilisateurs %}
-			<tr x-data="{ estActif: {{ utilisateur.est_actif }} }">
-				<td>
-					{{ utilisateur['id'] }}
-				</td>
-				<td>
-					{{ utilisateur['nom_utilisateur'] }}
-				</td>
-				<td>
-					{{ utilisateur['email'] }}
-				</td>
-				<td>
-					{{ utilisateur['date_inscription'] }}
-				</td>
-				<td>
-                        <span x-text="estActif ? 'Actif' : 'Inactif'"
-							  :class="estActif ? 'badge bg-success' : 'badge bg-secondary'">
-                        </span>
-				</td>
-				<td>
-					<button type="button" class="btn btn-sm" :class="estActif ? 'btn-warning' : 'btn-success'"
-							@click="let donnees = new FormData();
-                                        donnees.append('id', {{ utilisateur.id }});
-                                        fetch('changerUtilisateur', {method: 'POST', body: donnees});
-                                        estActif = !estActif;"
-							x-text="estActif ? 'Désactiver' : 'Activer'">
-					</button>
-				</td>
-				<td>
-					{% for role in utilisateur.roles %}
-						<span class="badge bg-info text-dark">{{ role.nom_role }}</span>
-					{% else %}
-						<span class="badge bg-secondary">Aucun</span>
-					{% endfor %}
-				</td>
-				<td>
-					<button class="btn btn-primary btn-sm"
-							@click.prevent.stop="openModal(
-									{{ utilisateur.id }},
-									[
-										{% for r in utilisateur.roles %}
-											{{ r.id }},
-										{% endfor %}
-									]
-								)">
-						Modifier Rôles
-					</button>
-				</td>
-				<td>
-					<form action="/supprimerUtilisateur" method="POST"
-						  onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer définitivement cet utilisateur ? Cette action est irréversible.');">
+    }
+}">
 
-						<input type="hidden" name="user_id" value="{{ utilisateur.id }}">
-						<button type="submit" class="btn btn-danger btn-sm">
-							<i class="bi bi-trash"></i> Supprimer
-						</button>
-					</form>
-				</td>
-			</tr>
-		{% endfor %}
-	</table>
+    <div class="table-responsive">
+        <table class="table table-striped table-hover align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Utilisateur</th>
+                    <th>Date d'inscription</th>
+                    <th>Rôles</th>
+                    <th class="text-center">Statut</th>
+                    <th class="text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for utilisateur in listeUtilisateurs %}
+                    <tr>
+                        <td>{{ utilisateur.id }}</td>
+                        <td>
+                            <strong>{{ utilisateur.nom_utilisateur }}</strong><br>
+                            <small class="text-muted">{{ utilisateur.email }}</small>
+                        </td>
+                        <td>{{ utilisateur.date_inscription|date("d/m/Y H:i") }}</td>
+                        
+                        <td>
+                            {% for role in utilisateur.roles %}
+                                <span class="badge bg-info text-dark border border-info-subtle">{{ role.nom_role }}</span>
+                            {% else %}
+                                <span class="badge bg-light text-dark border">Aucun rôle</span>
+                            {% endfor %}
+                        </td>
 
-	{# --- MODALE 100% ALPINE (Sans Bootstrap JS) --- #}
-	{# Fond gris (Overlay) #}
-	<div x-show="modalOpen"
-		 x-transition
-		 style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 9999; display: flex; align-items: center; justify-content: center;">
+                        <td class="text-center">
+                            {% if utilisateur.est_actif %}
+                                <span class="badge bg-success">Actif</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Inactif</span>
+                            {% endif %}
+                        </td>
 
-		{# La boîte blanche (La modale) #}
-		{# @click.away ferme la modale si on clique à côté #}
-		<div @click.away="modalOpen = false"
-			 style="background: white; padding: 2rem; border-radius: 8px; width: 500px; max-width: 90%; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                        <td class="text-center">
+                            <div class="d-flex justify-content-center gap-2">
+                                
+                                {% set roleIds = [] %}
+                                {% for r in utilisateur.roles %}
+                                    {% set roleIds = roleIds|merge([r.id]) %}
+                                {% endfor %}
+                                
+                                <button type="button" class="btn btn-primary btn-sm" 
+                                        @click="openModal({{ utilisateur.id }}, {{ roleIds|json_encode }})"
+                                        title="Gérer les rôles">
+                                    🎭 Rôles
+                                </button>
 
-			<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-				<h3 style="margin: 0;">Attribuer des rôles</h3>
-				<button type="button" @click="modalOpen = false"
-						style="background: none; border: none; font-size: 1.5rem; cursor: pointer;">&times;
-				</button>
-			</div>
+                                <form action="/changerUtilisateur" method="POST">
+                                    <input type="hidden" name="id" value="{{ utilisateur.id }}">
+                                    {% if utilisateur.est_actif %}
+                                        <button type="submit" class="btn btn-warning btn-sm" title="Désactiver le compte">
+                                            ⏸️
+                                        </button>
+                                    {% else %}
+                                        <button type="submit" class="btn btn-success btn-sm" title="Activer le compte">
+                                            ▶️
+                                        </button>
+                                    {% endif %}
+                                </form>
 
-			<form action="/majRoles" method="POST">
-				{# ID de l'utilisateur injecté dynamiquement #}
-				<input type="hidden" name="user_id" :value="userToEdit">
+                                <form action="/supprimerUtilisateur" method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer définitivement cet utilisateur ?');">
+                                    <input type="hidden" name="user_id" value="{{ utilisateur.id }}">
+                                    <button type="submit" class="btn btn-danger btn-sm" title="Supprimer l'utilisateur">
+                                        🗑️
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center p-4">Aucun utilisateur trouvé.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
-				<p>Cochez les rôles souhaités :</p>
+    <div class="modal-overlay" x-show="modalOpen" x-transition x-cloak style="display: none;">
+        <div class="modal-container" @click.away="modalOpen = false">
+            <div class="modal-content">
+                <div class="modal-header d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="modal-title">Attribuer des rôles</h5>
+                    <button type="button" class="btn-close" @click="modalOpen = false"></button>
+                </div>
 
-				<div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
-					{% for role in tousLesRoles %}
-						<label style="display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 10px; border: 1px solid #eee; border-radius: 4px;">
-							<input type="checkbox"
-								   name="roles[]"
-								   value="{{ role.id }}"
-								   :checked="userRoles.includes({{ role.id }})">
-							<div>
-								<strong>{{ role.nom_role }}</strong>
-								<div style="font-size: 0.8em; color: gray;">{{ role.description }}</div>
-							</div>
-						</label>
-					{% endfor %}
-				</div>
+                <form action="/majRoles" method="POST">
+                    <div class="modal-body">
+                        <input type="hidden" name="user_id" :value="userToEdit">
+                        <p class="mb-2">Sélectionnez les rôles pour cet utilisateur :</p>
 
-				<div style="display: flex; justify-content: flex-end; gap: 10px;">
-					<button type="button" class="btn btn-secondary" @click="modalOpen = false">Annuler</button>
-					<button type="submit" class="btn btn-success">Enregistrer</button>
-				</div>
-			</form>
-		</div>
-	</div>
+                        <div class="list-group">
+                            {% for role in tousLesRoles %}
+                                <label class="list-group-item d-flex gap-3 align-items-center">
+                                    <input class="form-check-input flex-shrink-0" 
+                                           type="checkbox" 
+                                           name="roles[]" 
+                                           value="{{ role.id }}" 
+                                           :checked="userRoles.includes({{ role.id }})">
+                                    <span>
+                                        <strong>{{ role.nom_role }}</strong>
+                                        <small class="d-block text-muted">{{ role.description }}</small>
+                                    </span>
+                                </label>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="modal-footer mt-4 text-end">
+                        <button type="button" class="btn btn-secondary me-2" @click="modalOpen = false">Annuler</button>
+                        <button type="submit" class="btn btn-success">Enregistrer</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
+
+<style>
+    .modal-overlay {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1050;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .modal-container {
+        width: 100%;
+        max-width: 500px;
+        background: var(--bg2);
+        color: var(--font-color);
+        border-radius: 8px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        padding: 2px;
+        background-color: #198754;
+    }
+    .modal-content {
+        background: var(--bg2);
+        padding: 20px;
+        border-radius: 6px;
+    }
+    [x-cloak] { display: none !important; }
+</style>
