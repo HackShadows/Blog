@@ -158,4 +158,16 @@ class Dashboard
         return true;
     }
 
+    public function getTagsAvecCount() {
+        $sql = "SELECT t.id, t.nom_tag, t.slug, COUNT(at.article_id) as nombre_articles 
+                FROM Tags t 
+                LEFT JOIN Article_Tag at ON t.id = at.tag_id 
+                GROUP BY t.id 
+                ORDER BY nombre_articles DESC, t.nom_tag ASC";
+        $query = $this->db->prepare($sql);
+        $query->execute();
+        return $query->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+
 }

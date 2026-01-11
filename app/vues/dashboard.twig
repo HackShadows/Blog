@@ -20,4 +20,7 @@
 	{% if permissions['commentaire_gerer'] %}
 		{% include "gestionCommentaire.twig" %}
 	{% endif %}
+	{% if permissions['tag_gerer'] %}
+		{% include 'tag.twig' %}
+	{% endif %}
 {% endblock %}

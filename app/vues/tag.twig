@@ -1,0 +1,41 @@
+<hr class="my-5">
+<section id="tags">
+	<div class="d-flex justify-content-between align-items-center mb-4">
+		<h2 class="h1">Gestion des Tags</h2>
+	</div>
+
+	<div class="table-responsive">
+		<table class="table table-hover align-middle">
+			<thead class="table-light">
+			<tr>
+				<th>Nom du Tag</th>
+				<th>Slug</th>
+				<th class="text-center">Articles Associés</th>
+			</tr>
+			</thead>
+			<tbody>
+			{% for tag in listeTags %}
+				<tr>
+					<td>
+						<span class="fw-bold text-primary">#{{ tag.nom_tag }}</span>
+					</td>
+					<td class="text-muted">
+						{{ tag.slug }}
+					</td>
+					<td class="text-center">
+						<span class="badge {{ tag.nombre_articles > 0 ? 'bg-info text-dark' : 'bg-secondary' }}">
+                                    {{ tag.nombre_articles }} article{{ tag.nombre_articles > 1 ? 's' : '' }}
+                                </span>
+					</td>
+				</tr>
+			{% else %}
+				<tr>
+					<td colspan="3" class="text-center py-4 text-muted">
+						Aucun tag trouvé.
+					</td>
+				</tr>
+			{% endfor %}
+			</tbody>
+		</table>
+	</div>
+</section>

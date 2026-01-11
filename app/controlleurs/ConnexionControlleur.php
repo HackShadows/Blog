@@ -36,6 +36,8 @@ class ConnexionControlleur {
         $tousLesArticles = [];
         $listeCommentaires = [];
         $filtreCommentaires = $_POST['filter_comm'] ?? 'En attente';
+        $mesArticles = $dashboardModel->getArticlesAuteur($userId);
+        $listeTags = [];
 
         if ($rolesPermissions['utilisateur_gerer']) {
             $listeUtilisateurs = $dashboardModel->getUtilisateursAvecRoles();
@@ -44,8 +46,10 @@ class ConnexionControlleur {
         if ($rolesPermissions['article_editer_tous']) {
             $tousLesArticles = $dashboardModel->getTousLesArticles();
         }
+        if ($rolesPermissions['tag_gerer']) {
+            $listeTags = $dashboardModel->getTagsAvecCount();
+        }
 
-		$mesArticles = $dashboardModel->getArticlesAuteur($userId);
 
         if ($rolesPermissions['commentaire_gerer']) {
             if ($filtreCommentaires !== 'tous' and $filtreCommentaires !== 'En attente' and $filtreCommentaires !== 'Rejeté' and $filtreCommentaires !== 'Approuvé') {
@@ -62,6 +66,7 @@ class ConnexionControlleur {
             'tousLesArticles' => $tousLesArticles,
 			'mesArticles' => $mesArticles,
             'listeCommentaires' => $listeCommentaires,
+            'listeTags' => $listeTags,
         ]);
     }
 
