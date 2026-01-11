@@ -22,14 +22,14 @@ class ConnexionControlleur {
         $this->logs->log("dashboard");
         $userId = $session->get('user_id');
 
-        $rolesPermissions = ['admin_acces' => $this->permissions->hasPermission('admin_acces'),
-            'article_creer' => $this->permissions->hasPermission('article_creer'),
-            'article_editer_tous' => $this->permissions->hasPermission('article_editer_tous'),
-            'article_publier' => $this->permissions->hasPermission('article_publier'),
-            'article_supprimer' => $this->permissions->hasPermission('article_supprimer'),
-            'commentaire_gerer' => $this->permissions->hasPermission('commentaire_gerer'),
-            'tag_gerer' => $this->permissions->hasPermission('tag_gerer'),
-            'utilisateur_gerer' => $this->permissions->hasPermission('utilisateur_gerer')];
+        $rolesPermissions = ['admin_acces' => $this->permissions->UtilisateurAPermission('admin_acces'),
+            'article_creer' => $this->permissions->UtilisateurAPermission('article_creer'),
+            'article_editer_tous' => $this->permissions->UtilisateurAPermission('article_editer_tous'),
+            'article_publier' => $this->permissions->UtilisateurAPermission('article_publier'),
+            'article_supprimer' => $this->permissions->UtilisateurAPermission('article_supprimer'),
+            'commentaire_gerer' => $this->permissions->UtilisateurAPermission('commentaire_gerer'),
+            'tag_gerer' => $this->permissions->UtilisateurAPermission('tag_gerer'),
+            'utilisateur_gerer' => $this->permissions->UtilisateurAPermission('utilisateur_gerer')];
         $dashboardModel = new Dashboard();
         $listeUtilisateurs = [];
         $tousLesRoles = [];
@@ -42,7 +42,7 @@ class ConnexionControlleur {
             $tousLesRoles = $dashboardModel->getAllRoles();
         }
         if ($rolesPermissions['article_editer_tous']) {
-            $tousLesArticles = $dashboardModel->getAllArticlesWithAuthors();
+            $tousLesArticles = $dashboardModel->getTousLesArticles();
         }
 
 		$mesArticles = $dashboardModel->getArticlesAuteur($userId);
@@ -88,7 +88,7 @@ class ConnexionControlleur {
             }
 
             $connexionModel = new Connexion();
-            $result = $connexionModel->registerUser($username, $email, $password);
+            $result = $connexionModel->EnregistrerUtilisateur($username, $email, $password);
 
             if ($result === true) {
                 header('Location: /connexion');
@@ -108,7 +108,7 @@ class ConnexionControlleur {
         $this->logs->log("majRoles: Début du traitement");
 
         // 1. Vérification de la permission (avec l'instance de la classe)
-        if ($this->permissions->hasPermission('utilisateur_gerer')) {
+        if ($this->permissions->UtilisateurAPermission('utilisateur_gerer')) {
 
             // 2. Vérification des données POST
             if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['user_id'])) {
@@ -154,7 +154,7 @@ class ConnexionControlleur {
         // 1. Vérifier la permission
         $logger = Logger::getInstance();
         $logger->log("supprimerUtilisateur");
-        if ($this->permissions->hasPermission('utilisateur_gerer')) {
+        if ($this->permissions->UtilisateurAPermission('utilisateur_gerer')) {
             $logger->log("supprimerUtilisateur permission");
             // 2. Vérifier le POST
             if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['user_id'])) {
@@ -166,7 +166,7 @@ class ConnexionControlleur {
                     // On peut ajouter un message flash ici si vous en avez
                 } else {
                     $dashboardModel = new Dashboard();
-                    $dashboardModel->deleteUser($userId);
+                    $dashboardModel->supprimerUtilisateur($userId);
                 }
             }
         }
@@ -175,7 +175,7 @@ class ConnexionControlleur {
     }
 
     public function changerStatutArticle() {
-        if ($this->permissions->hasPermission('article_editer_tous')) {
+        if ($this->permissions->UtilisateurAPermission('article_editer_tous')) {
             if (isset($_POST['article_id']) && isset($_POST['statut'])) {
                 $dashboardModel = new Dashboard();
                 $dashboardModel->updateArticleStatus($_POST['article_id'], $_POST['statut']);
@@ -186,10 +186,10 @@ class ConnexionControlleur {
     }
 
     public function supprimerArticle() {
-        if ($this->permissions->hasPermission('article_supprimer')) {
+        if ($this->permissions->UtilisateurAPermission('article_supprimer')) {
             if (isset($_POST['article_id'])) {
                 $dashboardModel = new Dashboard();
-                $dashboardModel->deleteArticle($_POST['article_id']);
+                $dashboardModel->supprimerArticle($_POST['article_id']);
             }
         }
         header('Location: /connexion');
@@ -197,10 +197,10 @@ class ConnexionControlleur {
     }
 
     public function changerStatutCommentaire() {
-        if ($this->permissions->hasPermission('commentaire_gerer')) {
+        if ($this->permissions->UtilisateurAPermission('commentaire_gerer')) {
             if (isset($_POST['comment_id']) && isset($_POST['statut'])) {
                 $dashboardModel = new Dashboard();
-                $dashboardModel->updateCommentStatus($_POST['comment_id'], $_POST['statut']);
+                $dashboardModel->miseAJourStatutCommentaire($_POST['comment_id'], $_POST['statut']);
             }
         }
         header('Location: /connexion');
@@ -208,10 +208,10 @@ class ConnexionControlleur {
     }
 
     public function supprimerCommentaire() {
-        if ($this->permissions->hasPermission('commentaire_gerer')) {
+        if ($this->permissions->UtilisateurAPermission('commentaire_gerer')) {
             if (isset($_POST['comment_id'])) {
                 $dashboardModel = new Dashboard();
-                $dashboardModel->deleteComment($_POST['comment_id']);
+                $dashboardModel->supprimerCommentaire($_POST['comment_id']);
             }
         }
         header('Location: /connexion');

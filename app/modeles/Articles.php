@@ -70,7 +70,7 @@ class Articles
 		}
 	}
 
-	public function updateArticle($id, $titre, $slug, $contenu, $statut)
+	public function MiseAJourArticle($id, $titre, $slug, $contenu, $statut)
 	{
 		try {
 			$query = $this->db->prepare("UPDATE Articles 

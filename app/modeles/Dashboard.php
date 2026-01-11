@@ -8,7 +8,7 @@ class Dashboard
 		$this->db = Database::getInstance()->getConnection();
 	}
 
-	public function getUser($userEmail)
+	public function getUtilisateur($userEmail)
 	{
 		$query = $this->db->prepare("SELECT id, nom_utilisateur, email FROM Utilisateurs WHERE email = :email");
 		$query->bindParam(':email', $userEmail);
@@ -23,7 +23,7 @@ class Dashboard
         return $query->execute([$utilisateurId]);
     }
 
-    public function getAllRoles(){
+    public function getTousLesRoles(){
         $query = $this->db->prepare("SELECT * FROM Roles");
         $query->execute();
         return $query->fetchAll(PDO::FETCH_ASSOC);
@@ -46,9 +46,9 @@ class Dashboard
         return $users;
     }
 
-    public function updateRoles($userId, $rolesIds) {
+    public function miseAJourRole($userId, $rolesIds) {
         $logger = Logger::getInstance();
-        $logger->log("entree dans updateRoles");
+        $logger->log("entree dans miseAJourRole");
         try {
             $this->db->beginTransaction();
             $del = $this->db->prepare("DELETE FROM Role_User WHERE user_id = ?");
@@ -79,7 +79,7 @@ class Dashboard
 		return $query->fetchAll(PDO::FETCH_ASSOC);
 	}
 
-    public function deleteUser($userId) {
+    public function supprimerUtilisateur($userId) {
         try {
             $this->db->beginTransaction();
 
@@ -100,7 +100,7 @@ class Dashboard
         }
     }
 
-    public function getAllArticlesWithAuthors() {
+    public function getTousLesArticles() {
         $query = $this->db->prepare("SELECT a.*, u.nom_utilisateur 
                 FROM Articles a 
                 JOIN Utilisateurs u ON a.utilisateur_id = u.id 
@@ -110,7 +110,7 @@ class Dashboard
         return $articles;
     }
 
-    public function updateArticleStatus($id, $newStatus) {
+    public function MiseAJourArticleStatus($id, $newStatus) {
         $allowed = ['Brouillon', 'Publié', 'Archivé'];
         if (!in_array($newStatus, $allowed)) return false;
 
@@ -119,7 +119,7 @@ class Dashboard
         return true;
     }
 
-    public function deleteArticle($id) {
+    public function supprimerArticle($id) {
         $query = $this->db->prepare("DELETE FROM Articles WHERE id = ?");
         $query->execute([$id]);
         return true;
@@ -146,13 +146,13 @@ class Dashboard
         return $query->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function updateCommentStatus($id, $status) {
+    public function miseAJourStatutCommentaire($id, $status) {
         $query = $this->db->prepare("UPDATE Commentaires SET statut = ? WHERE id = ?");
         $query->execute([$status, $id]);
         return true;
     }
 
-    public function deleteComment($id) {
+    public function supprimerCommentaire($id) {
         $query = $this->db->prepare("DELETE FROM Commentaires WHERE id = ?");
         $query->execute([$id]);
         return true;

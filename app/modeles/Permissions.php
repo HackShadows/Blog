@@ -13,7 +13,7 @@ class Permissions
 		$this->logger = Logger::getInstance();
 	}
 	
-	public function hasPermission($permissionName){
+	public function UtilisateurAPermission($permissionName){
 		try {
 			$query = $this->db->prepare("SELECT DISTINCT p.id, u.nom_utilisateur 
 										FROM Permissions p 
@@ -35,7 +35,7 @@ class Permissions
 		}
 	}
 
-	public function hasRole($roleName){
+	public function UtilisateurARole($roleName){
 		try {
 			$query = $this->db->prepare("SELECT DISTINCT u.nom_utilisateur FROM Roles r
 										JOIN Role_User ru ON r.id = ru.role_id

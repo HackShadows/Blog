@@ -44,7 +44,7 @@ class Connexion
         $this->session->set('username', null);
     }
 
-	public function registerUser($username, $email, $password) {
+	public function EnregistrerUtilisateur($username, $email, $password) {
 		try {
 			// 1. Vérifier si l'utilisateur existe déjà
 			$check = $this->db->prepare("SELECT id FROM Utilisateurs WHERE email = ? OR nom_utilisateur = ?");

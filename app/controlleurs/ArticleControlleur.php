@@ -43,12 +43,12 @@ class ArticleControlleur
 
 	public function creer()
 	{
-		if (!$this->permissions->hasPermission('article_creer')) {
+		if (!$this->permissions->UtilisateurAPermission('article_creer')) {
 			header('Location: /accueil');
 			exit;
 		}
 
-		$peutPublier = $this->permissions->hasPermission('article_publier');
+		$peutPublier = $this->permissions->UtilisateurAPermission('article_publier');
 
 		echo $this->twig->render('creer_article.twig', [
 			'articlesNav' => $this->articleModel->getArticlesNav(),
@@ -59,7 +59,7 @@ class ArticleControlleur
 	public function traitementCreation()
 	{
 		// 1. Vérification des permissions
-		if (!$this->permissions->hasPermission('article_creer')) {
+		if (!$this->permissions->UtilisateurAPermission('article_creer')) {
 			header('Location: /accueil');
 			exit;
 		}
@@ -69,7 +69,7 @@ class ArticleControlleur
 			$contenu = $_POST['contenu']; // Le Markdown brut
 			$statut = $_POST['statut'];
 
-			if (!$this->permissions->hasPermission('article_publier')) {
+			if (!$this->permissions->UtilisateurAPermission('article_publier')) {
 				$statut = 'Brouillon';
 			}
 			
@@ -118,7 +118,7 @@ class ArticleControlleur
 			exit;
 		}
 
-		$peutPublier = $this->permissions->hasPermission('article_publier');
+		$peutPublier = $this->permissions->UtilisateurAPermission('article_publier');
 
 		echo $this->twig->render('creer_article.twig', [
 			'is_edit' => true,      // Active le mode édition
@@ -138,7 +138,7 @@ class ArticleControlleur
 			$statut = $_POST['statut'];
 			
 			// RÈGLE MÉTIER : Si pas de permission publier, on force le statut Brouillon
-			if (!$this->permissions->hasPermission('article_publier')) {
+			if (!$this->permissions->UtilisateurAPermission('article_publier')) {
 				$statut = 'Brouillon';
 			}
 
@@ -152,7 +152,7 @@ class ArticleControlleur
 				exit;
 			} else {
 				// Erreur : on réaffiche le formulaire
-				$peutPublier = $this->permissions->hasPermission('article_publier');
+				$peutPublier = $this->permissions->UtilisateurAPermission('article_publier');
 				echo $this->twig->render('creer_article.twig', [
 					'is_edit' => true,
 					'error' => is_string($result) ? $result : "Erreur lors de la mise à jour",
