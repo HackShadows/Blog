@@ -34,6 +34,9 @@ class ConnexionControlleur {
         $listeUtilisateurs = [];
         $tousLesRoles = [];
         $tousLesArticles = [];
+        $listeCommentaires = [];
+        $filtreCommentaires = $_POST['filter_comm'] ?? 'En attente';
+
         if ($rolesPermissions['utilisateur_gerer']) {
             $listeUtilisateurs = $dashboardModel->getUtilisateursAvecRoles();
             $tousLesRoles = $dashboardModel->getAllRoles();
@@ -44,6 +47,12 @@ class ConnexionControlleur {
 
 		$mesArticles = $dashboardModel->getArticlesAuteur($userId);
 
+        if ($rolesPermissions['commentaire_gerer']) {
+            if ($filtreCommentaires !== 'tous' and $filtreCommentaires !== 'En attente' and $filtreCommentaires !== 'Rejeté' and $filtreCommentaires !== 'Approuvé') {
+                $filtreCommentaires = 'tous';
+            }
+            $listeCommentaires = $dashboardModel->getCommentaires($filtreCommentaires);
+        }
         echo $this->twig->render('dashboard.twig', [
             'userId' => $userId,
             'permissions' => $rolesPermissions,
@@ -51,7 +60,8 @@ class ConnexionControlleur {
             'tousLesRoles' => $tousLesRoles,
             'articlesNav' => $this->articleModel->getArticlesNav(),
             'tousLesArticles' => $tousLesArticles,
-			'mesArticles' => $mesArticles
+			'mesArticles' => $mesArticles,
+            'listeCommentaires' => $listeCommentaires,
         ]);
     }
 
@@ -186,5 +196,26 @@ class ConnexionControlleur {
         exit;
     }
 
+    public function changerStatutCommentaire() {
+        if ($this->permissions->hasPermission('commentaire_gerer')) {
+            if (isset($_POST['comment_id']) && isset($_POST['statut'])) {
+                $dashboardModel = new Dashboard();
+                $dashboardModel->updateCommentStatus($_POST['comment_id'], $_POST['statut']);
+            }
+        }
+        header('Location: /connexion');
+        exit;
+    }
+
+    public function supprimerCommentaire() {
+        if ($this->permissions->hasPermission('commentaire_gerer')) {
+            if (isset($_POST['comment_id'])) {
+                $dashboardModel = new Dashboard();
+                $dashboardModel->deleteComment($_POST['comment_id']);
+            }
+        }
+        header('Location: /connexion');
+        exit;
+    }
 
 }

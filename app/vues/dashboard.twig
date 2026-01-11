@@ -17,4 +17,7 @@
 	{% if permissions['article_supprimer'] and not permissions['article_editer_tous'] %}
 		{% include "articleSupprimer.twig" %}
 	{% endif %}
+	{% if permissions['commentaire_gerer'] %}
+		{% include "gestionCommentaire.twig" %}
+	{% endif %}
 {% endblock %}

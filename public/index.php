@@ -56,6 +56,7 @@ switch ($uri) {
                 echo 'Mauvais email/mot de passe';
                 $ConnexionControlleur->index();
             }
+<<<<<<< HEAD
         } else {
             $logger->log("Affichage formulaire connexion");
             $ConnexionControlleur->index();
@@ -110,6 +111,56 @@ switch ($uri) {
                 $ArticleControlleur->index($e->getMessage());
             }
         } else {
+=======
+            break;
+        case '/changerUtilisateur':
+            $ConnexionControlleur->changerUtilisateur();
+            break;
+		case '/posterCommentaire':
+			$CommentaireControlleur->posterCommentaire();
+			break;
+		case '/inscription':
+			$ConnexionControlleur->inscription();
+			break;
+		case '/traitementInscription':
+			$ConnexionControlleur->traitementInscription();
+			break;
+		case '/creer-article':
+			$ArticleControlleur->creer();
+			break;
+		case '/traitementCreation':
+			$ArticleControlleur->traitementCreation();
+			break;
+		case '/editer-article':
+			$ArticleControlleur->editer();
+			break;
+		case '/traitementEdition':
+			$ArticleControlleur->traitementEdition();
+			break;
+        case '/deconnexion':
+            $connexion->logOut();
+            $ArticleControlleur->index(null);
+            break;
+        case '/majRoles':
+            $ConnexionControlleur->majRoles();
+            break;
+        case '/supprimerUtilisateur':
+            $ConnexionControlleur->supprimerUtilisateur();
+            break;
+        case '/changerStatutArticle':
+            $ConnexionControlleur->changerStatutArticle();
+            break;
+        case '/supprimerArticle':
+            $ConnexionControlleur->supprimerArticle();
+            break;
+        case '/changerStatutCommentaire':
+            $ConnexionControlleur->changerStatutCommentaire();
+            break;
+        case '/supprimerCommentaire':
+            $ConnexionControlleur->supprimerCommentaire();
+            break;
+        default:
+>>>>>>> ababb961f38eddfdacd9086c42f3d840cfe6b53f
             http_response_code(404);
             echo "Page non trouvée";
         }

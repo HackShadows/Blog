@@ -125,4 +125,37 @@ class Dashboard
         return true;
     }
 
+    public function getCommentaires($filtre) {
+        $sql = "SELECT c.*, a.titre AS titre_article, a.slug 
+                FROM Commentaires c 
+                JOIN Articles a ON c.article_id = a.id";
+
+        if ($filtre === 'En attente') {
+            $sql .= " WHERE c.statut = 'En attente'";
+        }
+        if ($filtre === 'Rejeté') {
+            $sql .= " WHERE c.statut = 'Rejeté'";
+        }
+        if ($filtre === 'Approuvé') {
+            $sql .= " WHERE c.statut = 'Approuvé'";
+        }
+
+        $sql .= " ORDER BY c.date_commentaire DESC";
+        $query = $this->db->prepare($sql);
+        $query->execute();
+        return $query->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function updateCommentStatus($id, $status) {
+        $query = $this->db->prepare("UPDATE Commentaires SET statut = ? WHERE id = ?");
+        $query->execute([$status, $id]);
+        return true;
+    }
+
+    public function deleteComment($id) {
+        $query = $this->db->prepare("DELETE FROM Commentaires WHERE id = ?");
+        $query->execute([$id]);
+        return true;
+    }
+
 }
