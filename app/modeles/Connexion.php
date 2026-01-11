@@ -33,6 +33,7 @@ class Connexion
 			} catch (PDOException $e) {
 				$error = "Erreur de base de données.";
 				$this->logger->log("Erreur PDO : " . $e->getMessage());
+				return false;
 			}
 		}
 	}

@@ -77,10 +77,9 @@ class ConnexionControlleur
     }
 
     public function changerUtilisateur(){
-        $logger = Logger::getInstance();
-        $logger->log("toggleUser-entree dans fct");
+        $this->logs->log("toggleUser-entree dans fct");
         if (isset($_POST['id'])) {
-            $logger->log("toggleUser-entree dans if");
+            $this->logs->log("toggleUser-entree dans if");
             $userId = intval($_POST['id']);
 
             $dashboardModel = new Dashboard();
