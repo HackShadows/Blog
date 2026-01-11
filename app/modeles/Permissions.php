@@ -15,14 +15,14 @@ class Permissions
 	
 	public function hasPermission($permissionName){
 		try {
-			$stmt = $this->db->prepare("SELECT DISTINCT p.id, u.nom_utilisateur 
+			$query = $this->db->prepare("SELECT DISTINCT p.id, u.nom_utilisateur 
 										FROM Permissions p 
 										JOIN Role_Permission rp ON p.id = rp.permission_id
 										JOIN Role_User ru ON ru.role_id = rp.role_id 
 										JOIN Utilisateurs u ON u.id = ru.user_id
 										WHERE p.nom_permission = ? and u.id = ?;");
-			$stmt->execute([$permissionName, $this->session->get('user_id')]);
-			$boolean = $stmt->fetch(PDO::FETCH_ASSOC);
+			$query->execute([$permissionName, $this->session->get('user_id')]);
+			$boolean = $query->fetch(PDO::FETCH_ASSOC);
 			if ($boolean) {
 				return true;
 			} else {
@@ -37,12 +37,12 @@ class Permissions
 
 	public function hasRole($roleName){
 		try {
-			$stmt = $this->db->prepare("SELECT DISTINCT u.nom_utilisateur FROM Roles r
+			$query = $this->db->prepare("SELECT DISTINCT u.nom_utilisateur FROM Roles r
 										JOIN Role_User ru ON r.id = ru.role_id
 										JOIN Utilisateurs u ON u.id = ru.user_id
 										WHERE r.nom_role = ? and u.id = ?;");
-			$stmt->execute([$roleName, $this->session->get('user_id')]);
-			$boolean = $stmt->fetch(PDO::FETCH_ASSOC);
+			$query->execute([$roleName, $this->session->get('user_id')]);
+			$boolean = $query->fetch(PDO::FETCH_ASSOC);
 			if ($boolean) {
 				return true;
 			} else {

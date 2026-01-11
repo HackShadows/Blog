@@ -17,9 +17,9 @@ class Connexion
 			$username = $_POST['email'] ?? '';
 			$password = $_POST['password'] ?? '';
 			try {
-				$stmt = $this->db->prepare("SELECT * FROM Utilisateurs WHERE email = ? AND est_actif = 1");
-				$stmt->execute([$username]);
-				$user = $stmt->fetch(PDO::FETCH_ASSOC);
+				$query = $this->db->prepare("SELECT * FROM Utilisateurs WHERE email = ? AND est_actif = 1");
+				$query->execute([$username]);
+				$user = $query->fetch(PDO::FETCH_ASSOC);
 				if ($user && password_verify($password, $user['mot_de_passe'])) {
 					$this->session->set('user_id', $user['id']);
 					$this->session->set('username', $user['nom_utilisateur']);
@@ -52,10 +52,10 @@ class Connexion
 			try {
 				$id = $this->db->prepare("SELECT MAX(id)+1 FROM Utilisateurs");
 				$id->execute();
-				$stmt = $this->db->prepare("INSERT INTO Utilisateurs (id, email, nom_utilisateur, mot_de_passe, est_actif, date_inscription) VALUES (?, ?, ?, ?, 1, CURRENT_TIMESTAMP)");
-				$stmt->execute([$id, $email, $username, $password]);
-				$stmt = $this->db->prepare("INSERT INTO Role_User (role_id, user_id) VALUES (3, ?)");
-				$stmt->execute([$id]);
+				$query = $this->db->prepare("INSERT INTO Utilisateurs (id, email, nom_utilisateur, mot_de_passe, est_actif, date_inscription) VALUES (?, ?, ?, ?, 1, CURRENT_TIMESTAMP)");
+				$query->execute([$id, $email, $username, $password]);
+				$query = $this->db->prepare("INSERT INTO Role_User (role_id, user_id) VALUES (3, ?)");
+				$query->execute([$id]);
 				$this->logger->log("Création de  compte réussie pour {$username}");
 				exit;
 			} catch (PDOException $e) {

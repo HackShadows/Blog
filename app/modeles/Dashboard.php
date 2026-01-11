@@ -33,14 +33,14 @@ class Dashboard
         $users = $this->db->query("SELECT * FROM Utilisateurs")->fetchAll(PDO::FETCH_ASSOC);
 
         foreach ($users as &$user) {
-            $stmt = $this->db->prepare("
+            $query = $this->db->prepare("
                 SELECT r.id, r.nom_role, r.description 
                 FROM Roles r 
                 JOIN Role_User ru ON r.id = ru.role_id 
                 WHERE ru.user_id = ?
             ");
-            $stmt->execute([$user['id']]);
-            $user['roles'] = $stmt->fetchAll(PDO::FETCH_ASSOC); // Ajoute le tableau des rôles
+            $query->execute([$user['id']]);
+            $user['roles'] = $query->fetchAll(PDO::FETCH_ASSOC); // Ajoute le tableau des rôles
         }
 
         return $users;
@@ -79,11 +79,11 @@ class Dashboard
         try {
             $this->db->beginTransaction();
 
-            $stmtArticles = $this->db->prepare("DELETE FROM Articles WHERE utilisateur_id = ?");
-            $stmtArticles->execute([$userId]);
+            $queryArticles = $this->db->prepare("DELETE FROM Articles WHERE utilisateur_id = ?");
+            $queryArticles->execute([$userId]);
 
-            $stmtUser = $this->db->prepare("DELETE FROM Utilisateurs WHERE id = ?");
-            $stmtUser->execute([$userId]);
+            $queryUser = $this->db->prepare("DELETE FROM Utilisateurs WHERE id = ?");
+            $queryUser->execute([$userId]);
 
             $this->db->commit();
             return true;

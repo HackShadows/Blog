@@ -32,6 +32,12 @@ class Articles
 		return $query->fetchAll(PDO::FETCH_ASSOC);
 	}
 
+	public function ajouterCommentaire($articleId, $nom, $email, $contenu)
+	{
+		$query = $this->db->prepare("INSERT INTO Commentaires (article_id, nom_auteur, email_auteur, contenu, statut) VALUES (?, ?, ?, ?, 'En attente')");
+		return $query->execute([$articleId, $nom, $email, $contenu]);
+	}
+
     public function getCommentaire($articleId)
     {
         $query = $this->db->prepare("SELECT c.nom_auteur, c.contenu, c.date_commentaire FROM Commentaires c
