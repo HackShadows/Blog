@@ -31,6 +31,7 @@ class Permissions
 		} catch (PDOException $e) {
 			$error = "Erreur de base de données.";
 			$this->logger->log("Erreur PDO : " . $e->getMessage());
+			return false;
 		}
 	}
 
@@ -42,7 +43,6 @@ class Permissions
 										WHERE r.nom_role = ? and u.id = ?;");
 			$stmt->execute([$roleName, $this->session->get('user_id')]);
 			$boolean = $stmt->fetch(PDO::FETCH_ASSOC);
-			echo '<br>';
 			if ($boolean) {
 				return true;
 			} else {
@@ -51,6 +51,7 @@ class Permissions
 		} catch (PDOException $e) {
 			$error = "Erreur de base de données.";
 			$this->logger->log("Erreur PDO : " . $e->getMessage());
+			return false;
 		}
 	}
 }
