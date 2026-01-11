@@ -1,0 +1,68 @@
+{% extends "base.twig" %}
+
+{% block main %}
+    {# Importation de EasyMDE (Markdown Editor) #}
+    <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css">
+    <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
+
+    <h1 class="title" id="contactFormTitle">Rédiger un Article</h1>
+
+    {# On réutilise le style #contactForm mais on l'élargit pour l'éditeur #}
+    <style>
+        #articleFormContainer {
+            max-width: 900px !important; /* Plus large pour l'éditeur */
+        }
+        .editor-toolbar {
+            background-color: #fff;
+            color: #000;
+        }
+        /* Ajustement Dark Mode pour l'éditeur */
+        [data-bs-theme="dark"] .CodeMirror, 
+        [data-bs-theme="dark"] .editor-toolbar, 
+        [data-bs-theme="dark"] .editor-preview-side {
+            background-color: #2b3035;
+            color: #ddd;
+            border-color: #444;
+        }
+        [data-bs-theme="dark"] .editor-toolbar button {
+            color: #ddd;
+        }
+        [data-bs-theme="dark"] .editor-toolbar button:hover {
+            background-color: #444;
+        }
+    </style>
+
+    <form action="/traitementCreation" method="POST" id="contactForm" class="mx-auto" style="max-width: 800px;">
+        
+        {% if error %}
+            <div class="alert alert-danger">{{ error }}</div>
+        {% endif %}
+
+        <label for="titre">Titre de l'article :</label>
+        <input type="text" id="titre" name="titre" value="{{ data.titre }}" required placeholder="Mon super titre VTT">
+
+        <label for="statut">Statut :</label>
+        <select name="statut" id="statut" class="form-select mb-3" style="background-color: var(--bg2); color: var(--font-color); border: none; padding: 10px; border-radius: 4px;">
+            <option value="Brouillon">Brouillon</option>
+            <option value="Publié">Publié</option>
+            <option value="Archivé">Archivé</option>
+        </select>
+
+        <label for="contenu">Contenu (Markdown) :</label>
+        {# Le textarea sera transformé par EasyMDE #}
+        <textarea id="contenu" name="contenu">{{ data.contenu }}</textarea>
+
+        <button type="submit" class="mt-3">Enregistrer l'article</button>
+    </form>
+
+    <script>
+        // Initialisation de l'éditeur WYSIWYG/Markdown
+        const easyMDE = new EasyMDE({ 
+            element: document.getElementById('contenu'),
+            spellChecker: false,
+            placeholder: "Écrivez votre article ici... Utilisez **gras**, *italique*, etc.",
+            minHeight: "300px",
+            promptURLs: true
+        });
+    </script>
+{% endblock %}
