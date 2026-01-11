@@ -45,12 +45,12 @@ switch ($uri) {
         if (!empty($userId)) {
             $logger->log("Utilisateur déjà connecté -> Redirection Dashboard");
             $userEmail = $session->get('email') ?? '';
-            $ConnexionControlleur->dashboard($userEmail);
+            $ConnexionControlleur->dashboard();
         } elseif (!empty($_POST)) {
             $logger->log("Tentative de connexion (POST)");
             if ($connexion->logIn()) {
                 $logger->log("Connexion réussie pour " . $_POST['email']);
-                $ConnexionControlleur->dashboard($_POST["email"]);
+                $ConnexionControlleur->dashboard();
             } else {
                 $logger->log("Echec connexion");
                 echo 'Mauvais email/mot de passe';
@@ -63,7 +63,7 @@ switch ($uri) {
         break;
     case '/changerUtilisateur':
         $ConnexionControlleur->changerUtilisateur();
-		$ConnexionControlleur->dashboard($_POST["email"]);
+		$ConnexionControlleur->dashboard();
         break;
     case '/posterCommentaire':
         $CommentaireControlleur->posterCommentaire();

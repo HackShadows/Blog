@@ -17,7 +17,7 @@ class ConnexionControlleur {
         echo $this->twig->render('connexion.twig', ['articlesNav' => $this->articleModel->getArticlesNav()]);
     }
 
-    public function dashboard($userEmail) {
+    public function dashboard() {
         $session = SessionManager::getInstance();
         $this->logs->log("dashboard");
         $userId = $session->get('user_id');
@@ -123,7 +123,7 @@ class ConnexionControlleur {
                 $this->logs->log("majRoles: Mise à jour demandée pour User ID " . $userId);
 
                 $dashboardModel = new Dashboard();
-                $result = $dashboardModel->updateRoles($userId, $roles);
+                $result = $dashboardModel->miseAJourRole($userId, $roles);
 
                 if ($result) {
                     $this->logs->log("majRoles: Succès updateRoles");
