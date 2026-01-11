@@ -169,5 +169,26 @@ class Dashboard
         return $query->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function getCommentairesEnAttente() {
+        $sql = "SELECT c.id, c.contenu, c.date_commentaire, c.nom_auteur, a.titre 
+                FROM Commentaires c 
+                JOIN Articles a ON c.article_id = a.id
+                WHERE c.statut = 'En attente' 
+                ORDER BY c.date_commentaire DESC";
+        $query = $this->db->prepare($sql);
+        $query->execute();
+        return $query->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getArticlesBrouillon() {
+        $sql = "SELECT a.id, a.titre, a.date_creation, u.nom_utilisateur 
+                FROM Articles a 
+                JOIN Utilisateurs u ON a.utilisateur_id = u.id
+                WHERE a.statut = 'Brouillon'
+                ORDER BY a.date_creation DESC";
+        $query = $this->db->prepare($sql);
+        $query->execute();
+        return $query->fetchAll(PDO::FETCH_ASSOC);
+    }
 
 }

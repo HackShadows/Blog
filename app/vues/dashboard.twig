@@ -1,6 +1,9 @@
 {% extends "base.twig" %}
 
 {% block main %}
+	{% if permissions['commentaire_gerer'] or permissions['article_publier'] %}
+		{% include "notification.twig" %}
+	{% endif %}
 	{% if permissions['article_creer'] %}
 		{% include "articleCreer.twig" %}
 		{% include "mesArticles.twig" %}

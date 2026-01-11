@@ -1,0 +1,75 @@
+<div class="d-flex justify-content-end mb-4" x-data="{ notifOpen: false }" style="position: relative;">
+
+    <button @click.prevent.stop="notifOpen = !notifOpen"
+            type="button"
+            class="btn btn-outline-secondary position-relative"
+            title="Notifications de modération">
+
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-bell" viewBox="0 0 16 16">
+            <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zM8 1.918l-.797.161A4.002 4.002 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4.002 4.002 0 0 0-3.203-3.92L8 1.917zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5.002 5.002 0 0 1 13 6c0 .88.32 4.2 1.22 6z"/>
+        </svg>
+
+        {% if notifications.total > 0 %}
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                        {{ notifications.total }}
+                        <span class="visually-hidden">notifications en attente</span>
+                    </span>
+        {% endif %}
+    </button>
+
+    <div x-show="notifOpen"
+         x-transition.opacity
+         x-cloak
+         @click.away="notifOpen = false"
+         style="position: absolute; top: 50px; right: 0; width: 400px; max-width: 90vw; background: white; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; overflow: hidden;">
+
+        <div class="p-3 border-bottom bg-light d-flex justify-content-between align-items-center">
+            <h5 class="m-0 h6">En attente de validation</h5>
+            <button type="button" class="btn-close btn-sm" @click="notifOpen = false"></button>
+        </div>
+
+        <div class="list-group list-group-flush" style="max-height: 400px; overflow-y: auto;">
+
+            {% if notifications.total == 0 %}
+                <div class="p-3 text-center text-muted">
+                    <small>Rien à signaler.</small>
+                </div>
+            {% endif %}
+
+            {% if notifications.articles is not empty %}
+                <div class="list-group-item bg-light text-uppercase fw-bold" style="font-size: 0.75rem;">
+                    Articles en attente ({{ notifications.articles|length }})
+                </div>
+                {% for art in notifications.articles %}
+                    <div class="list-group-item">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <strong>{{ art.titre }}</strong>
+                                <div class="text-muted small">Par {{ art.nom_utilisateur }}</div>
+                                <div class="text-muted small">{{ art.date_creation|date("d/m/Y") }}</div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            {% if notifications.commentaires is not empty %}
+                <div class="list-group-item bg-light text-uppercase fw-bold" style="font-size: 0.75rem;">
+                    Commentaires à valider ({{ notifications.commentaires|length }})
+                </div>
+                {% for comm in notifications.commentaires %}
+                    <div class="list-group-item">
+                        <p class="mb-1 small text-truncate">"{{ comm.contenu }}"</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">
+                                Sur : <em>{{ comm.titre }}</em><br>
+                                Par : {{ comm.nom_auteur }}
+                            </small>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+        </div>
+    </div>
+</div>

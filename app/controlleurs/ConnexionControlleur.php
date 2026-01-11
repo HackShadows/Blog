@@ -38,6 +38,13 @@ class ConnexionControlleur {
         $filtreCommentaires = $_POST['filter_comm'] ?? 'En attente';
         $mesArticles = $dashboardModel->getArticlesAuteur($userId);
         $listeTags = [];
+        $notifications = [
+            'commentaires' => [],
+            'articles' => [],
+            'total' => 0
+        ];
+
+
 
         if ($rolesPermissions['utilisateur_gerer']) {
             $listeUtilisateurs = $dashboardModel->getUtilisateursAvecRoles();
@@ -45,6 +52,7 @@ class ConnexionControlleur {
         }
         if ($rolesPermissions['article_editer_tous']) {
             $tousLesArticles = $dashboardModel->getTousLesArticles();
+            $notifications['articles'] = $dashboardModel->getArticlesBrouillon();
         }
         if ($rolesPermissions['tag_gerer']) {
             $listeTags = $dashboardModel->getTagsAvecCount();
@@ -56,7 +64,9 @@ class ConnexionControlleur {
                 $filtreCommentaires = 'tous';
             }
             $listeCommentaires = $dashboardModel->getCommentaires($filtreCommentaires);
+            $notifications['commentaires'] = $dashboardModel->getCommentairesEnAttente();
         }
+        $notifications['total'] = count($notifications['commentaires']) + count($notifications['articles']);
         echo $this->twig->render('dashboard.twig', [
             'userId' => $userId,
             'permissions' => $rolesPermissions,
@@ -67,6 +77,7 @@ class ConnexionControlleur {
 			'mesArticles' => $mesArticles,
             'listeCommentaires' => $listeCommentaires,
             'listeTags' => $listeTags,
+            'notifications' => $notifications,
         ]);
     }
 
