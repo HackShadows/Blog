@@ -145,7 +145,7 @@ class ArticleControlleur
 			// Régénération du slug (au cas où le titre change)
 			$slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', iconv('UTF-8', 'ASCII//TRANSLIT', $titre))));
 
-			$result = $this->articleModel->updateArticle($id, $titre, $slug, $contenu, $statut);
+			$result = $this->articleModel->miseAJourArticle($id, $titre, $slug, $contenu, $statut);
 
 			if ($result === true) {
 				header('Location: /connexion');

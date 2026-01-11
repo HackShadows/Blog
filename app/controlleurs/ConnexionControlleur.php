@@ -39,7 +39,7 @@ class ConnexionControlleur {
 
         if ($rolesPermissions['utilisateur_gerer']) {
             $listeUtilisateurs = $dashboardModel->getUtilisateursAvecRoles();
-            $tousLesRoles = $dashboardModel->getAllRoles();
+            $tousLesRoles = $dashboardModel->getTousLesRoles();
         }
         if ($rolesPermissions['article_editer_tous']) {
             $tousLesArticles = $dashboardModel->getTousLesArticles();
@@ -178,7 +178,7 @@ class ConnexionControlleur {
         if ($this->permissions->UtilisateurAPermission('article_editer_tous')) {
             if (isset($_POST['article_id']) && isset($_POST['statut'])) {
                 $dashboardModel = new Dashboard();
-                $dashboardModel->updateArticleStatus($_POST['article_id'], $_POST['statut']);
+                $dashboardModel->miseAJourStatutArticle($_POST['article_id'], $_POST['statut']);
             }
         }
         header('Location: /connexion');
