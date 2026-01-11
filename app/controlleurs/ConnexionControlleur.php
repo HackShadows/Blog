@@ -194,7 +194,7 @@ class ConnexionControlleur {
         if ($this->permissions->UtilisateurAPermission('article_editer_tous')) {
             if (isset($_POST['article_id']) && isset($_POST['statut'])) {
                 $dashboardModel = new Dashboard();
-                $dashboardModel->miseAJourStatutArticle($_POST['article_id'], $_POST['statut']);
+                $dashboardModel->MiseAJourArticleStatus($_POST['article_id'], $_POST['statut']);
             }
         }
         header('Location: /connexion');

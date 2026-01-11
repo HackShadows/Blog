@@ -5,11 +5,13 @@ class ArticleControlleur
 	private $twig;
 	private $logs;
 	private $permissions;
+	private $session;
 
 	public function __construct(Twig\Environment $twig)
 	{
 		$this->articleModel = new Articles();
 		$this->logs = Logger::getInstance();
+        $this->session = SessionManager::getInstance();
 		$this->twig = $twig;
 		$this->permissions = new Permissions();
 	}
@@ -24,20 +26,28 @@ class ArticleControlleur
 	public function article($articleId)
 	{
 		$article = $this->articleModel->getArticle($articleId);
-		$commentaires = $this->articleModel->getCommentaire($articleId);
 
 		if (empty($article)) {
 			$this->logs->log("Erreur id inconnu : L'article avec l'id $articleId n'existe pas.");
             throw new InvalidArgumentException("L'article avec l'id $articleId n'existe pas.");
         }
 
+		if ($article['statut'] === 'Brouillon') {
+            $currentUser = $this->session->get('username');
+            $authorUser = $article['nom_utilisateur'];
+            
+            $canPublish = $this->permissions->UtilisateurAPermission('article_publier');
+
+            if ($currentUser !== $authorUser && !$canPublish) {
+                $this->logs->log("Accès refusé : $currentUser a tenté de lire le brouillon $articleId");
+                header('Location: /accueil');
+                exit;
+            }
+        }
+		
+		$commentaires = $this->articleModel->getCommentaire($articleId);
+
 		$this->logs->log("ouvrir article id=" . strval($article["id"]));
-		// $dico = "[ ";
-		// foreach ($article as $key => $value) {
-		// 	$dico = $dico . $key . "=" . strval($value) . " ";
-		// }
-		// $dico = $dico . "]";
-		// $this->logs->log($dico);
 		echo $this->twig->render('article.twig', ['article' => $article, 'commentaires' => $commentaires, 'articlesNav' => $this->articleModel->getArticlesNav()]);
 	}
 
@@ -73,8 +83,7 @@ class ArticleControlleur
 				$statut = 'Brouillon';
 			}
 			
-			$session = SessionManager::getInstance();
-			$userId = $session->get('user_id');
+			$userId = $this->session->get('user_id');
 
 			// Génération du Slug (Titre -> titre-de-l-article)
 			// On remplace les accents et caractères spéciaux
@@ -101,8 +110,7 @@ class ArticleControlleur
 	public function editer()
 	{
 		// 1. Sécurité
-		$session = SessionManager::getInstance();
-		if (!$session->get('user_id')) { header('Location: /connexion'); exit; }
+		if (!$this->session->get('user_id')) { header('Location: /connexion'); exit; }
 
 		// 2. Récupération
 		if (!isset($_GET['id'])) { header('Location: /accueil'); exit; }
@@ -112,7 +120,7 @@ class ArticleControlleur
 
 		// 3. Vérification Propriétaire
 		// On compare le nom d'utilisateur de l'article avec celui de la session
-		if ($article['nom_utilisateur'] !== $session->get('username')) {
+		if ($article['nom_utilisateur'] !== $this->session->get('username')) {
 			// Si ce n'est pas mon article, retour au dashboard
 			header('Location: /connexion'); 
 			exit;
