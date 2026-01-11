@@ -62,7 +62,8 @@ class ArticleControlleur
 
 		echo $this->twig->render('creer_article.twig', [
 			'articlesNav' => $this->articleModel->getArticlesNav(),
-			'peutPublier' => $peutPublier
+			'peutPublier' => $peutPublier,
+			'tousLesTags' => $this->articleModel->getAllTags()
 		]);
 	}
 
@@ -86,9 +87,10 @@ class ArticleControlleur
 			
 			$userId = $this->session->get('user_id');
 			$slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', iconv('UTF-8', 'ASCII//TRANSLIT', $titre))));
+			$tags = $_POST['tags'] ?? [];
 
 			if (!empty($titre) && !empty($contenu) && !empty($userId)) {
-				$result = $this->articleModel->creerArticle($titre, $slug, $contenu, $userId, $statut, $image);
+				$result = $this->articleModel->creerArticle($titre, $slug, $contenu, $userId, $statut, $image, $tags);
 				
 				if ($result === true) {
 					header('Location: /accueil');
@@ -106,31 +108,29 @@ class ArticleControlleur
 
 	public function editer()
 	{
-		// 1. Sécurité
 		if (!$this->session->get('user_id')) { header('Location: /connexion'); exit; }
 
-		// 2. Récupération
 		if (!isset($_GET['id'])) { header('Location: /accueil'); exit; }
 		$article = $this->articleModel->getArticle($_GET['id']);
 
 		if (!$article) { header('Location: /accueil'); exit; }
 
-		// 3. Vérification Propriétaire
-		// On compare le nom d'utilisateur de l'article avec celui de la session
 		if ($article['nom_utilisateur'] !== $this->session->get('username')) {
-			// Si ce n'est pas mon article, retour au dashboard
 			header('Location: /connexion'); 
 			exit;
 		}
 
 		$peutPublier = $this->permissions->UtilisateurAPermission('article_publier');
+		$tagsArticle = $this->articleModel->getTagsByArticle($_GET['id']);
 
 		echo $this->twig->render('creer_article.twig', [
-			'is_edit' => true,      // Active le mode édition
-			'data' => $article,     // Pré-remplit les champs
+			'is_edit' => true,     
+			'data' => $article,     
 			'article_id' => $article['id'],
 			'articlesNav' => $this->articleModel->getArticlesNav(),
-			'peutPublier' => $peutPublier
+			'peutPublier' => $peutPublier,
+			'tousLesTags' => $this->articleModel->getAllTags(),
+            'tagsActuels' => $tagsArticle
 		]);
 	}
 
@@ -147,21 +147,19 @@ class ArticleControlleur
 				$image = $_POST['current_image'] ?? null;
 			}
 			
-			// RÈGLE MÉTIER : Si pas de permission publier, on force le statut Brouillon
 			if (!$this->permissions->UtilisateurAPermission('article_publier')) {
 				$statut = 'Brouillon';
 			}
 
-			// Régénération du slug (au cas où le titre change)
 			$slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', iconv('UTF-8', 'ASCII//TRANSLIT', $titre))));
+			$tags = $_POST['tags'] ?? [];
 
-			$result = $this->articleModel->miseAJourArticle($id, $titre, $slug, $contenu, $statut, $image);
+			$result = $this->articleModel->miseAJourArticle($id, $titre, $slug, $contenu, $statut, $image, $tags);
 
 			if ($result === true) {
 				header('Location: /connexion');
 				exit;
 			} else {
-				// Erreur : on réaffiche le formulaire
 				$peutPublier = $this->permissions->UtilisateurAPermission('article_publier');
 				echo $this->twig->render('creer_article.twig', [
 					'is_edit' => true,

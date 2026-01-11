@@ -46,6 +46,31 @@
             </div>
         {% endif %}
 
+		<div class="mb-3">
+            <label class="form-label fw-bold">Tags associés :</label>
+            <div class="card p-3" style="background-color: var(--bg2); border: 1px solid #ccc; max-height: 150px; overflow-y: auto;">
+                {% if tousLesTags is empty %}
+                    <small class="text-muted">Aucun tag disponible. Demandez à un administrateur d'en créer.</small>
+                {% else %}
+                    <div class="d-flex flex-wrap gap-3">
+                        {% for tag in tousLesTags %}
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" 
+                                       name="tags[]" 
+                                       value="{{ tag.id }}" 
+                                       id="tag_{{ tag.id }}"
+                                       {# Coché si on est en édition ET que l'ID est dans tagsActuels #}
+                                       {% if is_edit and tag.id in tagsActuels %}checked{% endif %}>
+                                <label class="form-check-label" for="tag_{{ tag.id }}">
+                                    #{{ tag.nom_tag }}
+                                </label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
         <label for="statut">Statut :</label>
         <select name="statut" id="statut" class="form-select mb-3" style="background-color: var(--bg2); color: var(--font-color); border: none; padding: 10px; border-radius: 4px;">
             <option value="Brouillon" {{ data.statut == 'Brouillon' ? 'selected' : '' }}>Brouillon</option>

@@ -55,34 +55,76 @@ class Articles
 		return $query->fetchAll(PDO::FETCH_ASSOC);
 	}
 
-	public function creerArticle($titre, $slug, $contenu, $userId, $statut, $image = null)
-	{
-		try {
-			$query = $this->db->prepare("INSERT INTO Articles (titre, slug, contenu, utilisateur_id, statut, image_une, date_creation, date_mise_a_jour) 
-										VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())");
-			return $query->execute([$titre, $slug, $contenu, $userId, $statut, $image]);
-		} catch (PDOException $e) {
-			if ($e->getCode() == 23000) return "Ce titre existe déjà.";
-			return false;
-		}
-	}
+	public function creerArticle($titre, $slug, $contenu, $userId, $statut, $image = null, $tags = [])
+    {
+        try {
+            $this->db->beginTransaction();
 
-	public function miseAJourArticle($id, $titre, $slug, $contenu, $statut, $image = null)
-	{
-		try {
-			$query = $this->db->prepare("UPDATE Articles 
-										SET titre = ?, slug = ?, contenu = ?, statut = ?, image_une = ?, date_mise_a_jour = NOW() 
-										WHERE id = ?");
-			return $query->execute([$titre, $slug, $contenu, $statut, $image, $id]);
-		} catch (PDOException $e) {
-			if ($e->getCode() == 23000) return "Ce titre existe déjà.";
-			return false;
-		}
-	}
+            $query = $this->db->prepare("INSERT INTO Articles (titre, slug, contenu, utilisateur_id, statut, image_une, date_creation, date_mise_a_jour) 
+                                        VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())");
+            $query->execute([$titre, $slug, $contenu, $userId, $statut, $image]);
+            
+            $articleId = $this->db->lastInsertId();
+            
+            $this->lierTags($articleId, $tags);
+
+            $this->db->commit();
+            return true;
+        } catch (PDOException $e) {
+            $this->db->rollBack();
+            if ($e->getCode() == 23000) return "Ce titre existe déjà.";
+            return false;
+        }
+    }
+
+	public function miseAJourArticle($id, $titre, $slug, $contenu, $statut, $image = null, $tags = [])
+    {
+        try {
+            $this->db->beginTransaction();
+
+            $query = $this->db->prepare("UPDATE Articles 
+                                        SET titre = ?, slug = ?, contenu = ?, statut = ?, image_une = ?, date_mise_a_jour = NOW() 
+                                        WHERE id = ?");
+            $query->execute([$titre, $slug, $contenu, $statut, $image, $id]);
+
+            $this->lierTags($id, $tags);
+
+            $this->db->commit();
+            return true;
+        } catch (PDOException $e) {
+            $this->db->rollBack();
+            if ($e->getCode() == 23000) return "Ce titre existe déjà.";
+            return false;
+        }
+    }
 
 	public function slugExiste($slug) {
 		$query = $this->db->prepare("SELECT id FROM Articles WHERE slug = ?");
 		$query->execute([$slug]);
 		return $query->fetch();
 	}
+
+	public function getAllTags() {
+        $query = $this->db->prepare("SELECT * FROM Tags ORDER BY nom_tag ASC");
+        $query->execute();
+        return $query->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getTagsByArticle($articleId) {
+        $query = $this->db->prepare("SELECT tag_id FROM Article_Tag WHERE article_id = ?");
+        $query->execute([$articleId]);
+        return $query->fetchAll(PDO::FETCH_COLUMN); 
+    }
+
+    private function lierTags($articleId, $tags) {
+        $del = $this->db->prepare("DELETE FROM Article_Tag WHERE article_id = ?");
+        $del->execute([$articleId]);
+
+        if (!empty($tags) && is_array($tags)) {
+            $insert = $this->db->prepare("INSERT INTO Article_Tag (article_id, tag_id) VALUES (?, ?)");
+            foreach ($tags as $tagId) {
+                $insert->execute([$articleId, $tagId]);
+            }
+        }
+    }
 }

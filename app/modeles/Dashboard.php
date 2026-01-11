@@ -191,4 +191,33 @@ class Dashboard
         return $query->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function creerTag($nomTag) {
+        $slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', iconv('UTF-8', 'ASCII//TRANSLIT', $nomTag))));
+        
+        $check = $this->db->prepare("SELECT id FROM Tags WHERE slug = ?");
+        $check->execute([$slug]);
+        if ($check->fetch()) return false;
+
+        $query = $this->db->prepare("INSERT INTO Tags (nom_tag, slug) VALUES (?, ?)");
+        return $query->execute([$nomTag, $slug]);
+    }
+
+    public function supprimerTag($id) {
+        try {
+            $this->db->beginTransaction();
+            
+            $delAssoc = $this->db->prepare("DELETE FROM Article_Tag WHERE tag_id = ?");
+            $delAssoc->execute([$id]);
+
+            $delTag = $this->db->prepare("DELETE FROM Tags WHERE id = ?");
+            $delTag->execute([$id]);
+
+            $this->db->commit();
+            return true;
+        } catch (Exception $e) {
+            $this->db->rollBack();
+            return false;
+        }
+    }
+
 }

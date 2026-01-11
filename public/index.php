@@ -96,6 +96,12 @@ switch ($uri) {
     case '/traitementEdition':
         $ArticleControlleur->traitementEdition();
         break;
+	case '/ajouterTag':
+        $ConnexionControlleur->ajouterTag();
+        break;
+    case '/supprimerTag':
+        $ConnexionControlleur->supprimerTag();
+        break;
     case '/deconnexion':
         $connexion->logOut();
         $ArticleControlleur->index(null);

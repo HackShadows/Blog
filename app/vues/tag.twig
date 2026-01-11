@@ -1,41 +1,46 @@
 <hr class="my-5">
 <section id="tags">
-	<div class="d-flex justify-content-between align-items-center mb-4">
-		<h2 class="h1">Gestion des Tags</h2>
-	</div>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="h1">Gestion des Tags</h2>
+        
+        {# Formulaire d'ajout inline #}
+        <form action="/ajouterTag" method="POST" class="d-flex gap-2">
+            <input type="text" name="nom_tag" class="form-control" placeholder="Nouveau tag..." required>
+            <button type="submit" class="btn btn-success text-nowrap">➕ Ajouter</button>
+        </form>
+    </div>
 
-	<div class="table-responsive">
-		<table class="table table-striped table-hover align-middle">
-			<thead class="table-dark">
-			<tr>
-				<th>Nom du Tag</th>
-				<th>Slug</th>
-				<th class="text-center">Articles Associés</th>
-			</tr>
-			</thead>
-			<tbody>
-			{% for tag in listeTags %}
-				<tr>
-					<td>
-						<span class="fw-bold text-primary">#{{ tag.nom_tag }}</span>
-					</td>
-					<td class="text-muted">
-						{{ tag.slug }}
-					</td>
-					<td class="text-center">
-						<span class="badge {{ tag.nombre_articles > 0 ? 'bg-info text-dark' : 'bg-secondary' }}">
-                            {{ tag.nombre_articles }} article{{ tag.nombre_articles > 1 ? 's' : '' }}
+    <div class="table-responsive">
+        <table class="table table-striped table-hover align-middle">
+            <thead class="table-dark">
+            <tr>
+                <th>Nom du Tag</th>
+                <th>Slug</th>
+                <th class="text-center">Articles Associés</th>
+                <th class="text-end">Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for tag in listeTags %}
+                <tr>
+                    <td><span class="fw-bold text-primary">#{{ tag.nom_tag }}</span></td>
+                    <td class="text-muted">{{ tag.slug }}</td>
+                    <td class="text-center">
+                        <span class="badge {{ tag.nombre_articles > 0 ? 'bg-info text-dark' : 'bg-secondary' }}">
+                            {{ tag.nombre_articles }} article(s)
                         </span>
-					</td>
-				</tr>
-			{% else %}
-				<tr>
-					<td colspan="3" class="text-center py-4 text-muted">
-						Aucun tag trouvé.
-					</td>
-				</tr>
-			{% endfor %}
-			</tbody>
-		</table>
-	</div>
+                    </td>
+                    <td class="text-end">
+                        <form action="/supprimerTag" method="POST" onsubmit="return confirm('Supprimer ce tag ? Cela ne supprimera pas les articles associés.');">
+                            <input type="hidden" name="tag_id" value="{{ tag.id }}">
+                            <button type="submit" class="btn btn-sm btn-danger">🗑️</button>
+                        </form>
+                    </td>
+                </tr>
+            {% else %}
+                <tr><td colspan="4" class="text-center py-4 text-muted">Aucun tag trouvé.</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </section>

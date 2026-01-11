@@ -4,11 +4,13 @@ class ConnexionControlleur {
     private $logs;
     private $permissions;
     private $articleModel;
+	private $dashboardModel;
 
     public function __construct(Twig\Environment $twig) {
         $this->logs = Logger::getInstance();
         $this->twig = $twig;
         $this->permissions = new Permissions();
+        $this->dashboardModel = new Dashboard();
         $this->articleModel = new Articles();
     }
 
@@ -30,13 +32,12 @@ class ConnexionControlleur {
             'commentaire_gerer' => $this->permissions->UtilisateurAPermission('commentaire_gerer'),
             'tag_gerer' => $this->permissions->UtilisateurAPermission('tag_gerer'),
             'utilisateur_gerer' => $this->permissions->UtilisateurAPermission('utilisateur_gerer')];
-        $dashboardModel = new Dashboard();
         $listeUtilisateurs = [];
         $tousLesRoles = [];
         $tousLesArticles = [];
         $listeCommentaires = [];
         $filtreCommentaires = $_POST['filter_comm'] ?? 'En attente';
-        $mesArticles = $dashboardModel->getArticlesAuteur($userId);
+        $mesArticles = $this->dashboardModel->getArticlesAuteur($userId);
         $listeTags = [];
         $notifications = [
             'commentaires' => [],
@@ -47,15 +48,15 @@ class ConnexionControlleur {
 
 
         if ($rolesPermissions['utilisateur_gerer']) {
-            $listeUtilisateurs = $dashboardModel->getUtilisateursAvecRoles();
-            $tousLesRoles = $dashboardModel->getTousLesRoles();
+            $listeUtilisateurs = $this->dashboardModel->getUtilisateursAvecRoles();
+            $tousLesRoles = $this->dashboardModel->getTousLesRoles();
         }
         if ($rolesPermissions['article_editer_tous']) {
-            $tousLesArticles = $dashboardModel->getTousLesArticles();
-            $notifications['articles'] = $dashboardModel->getArticlesBrouillon();
+            $tousLesArticles = $this->dashboardModel->getTousLesArticles();
+            $notifications['articles'] = $this->dashboardModel->getArticlesBrouillon();
         }
         if ($rolesPermissions['tag_gerer']) {
-            $listeTags = $dashboardModel->getTagsAvecCount();
+            $listeTags = $this->dashboardModel->getTagsAvecCount();
         }
 
 
@@ -63,8 +64,8 @@ class ConnexionControlleur {
             if ($filtreCommentaires !== 'tous' and $filtreCommentaires !== 'En attente' and $filtreCommentaires !== 'Rejeté' and $filtreCommentaires !== 'Approuvé') {
                 $filtreCommentaires = 'tous';
             }
-            $listeCommentaires = $dashboardModel->getCommentaires($filtreCommentaires);
-            $notifications['commentaires'] = $dashboardModel->getCommentairesEnAttente();
+            $listeCommentaires = $this->dashboardModel->getCommentaires($filtreCommentaires);
+            $notifications['commentaires'] = $this->dashboardModel->getCommentairesEnAttente();
         }
         $notifications['total'] = count($notifications['commentaires']) + count($notifications['articles']);
         echo $this->twig->render('dashboard.twig', [
@@ -133,8 +134,7 @@ class ConnexionControlleur {
 
                 $this->logs->log("majRoles: Mise à jour demandée pour User ID " . $userId);
 
-                $dashboardModel = new Dashboard();
-                $result = $dashboardModel->miseAJourRole($userId, $roles);
+                $result = $this->dashboardModel->miseAJourRole($userId, $roles);
 
                 if ($result) {
                     $this->logs->log("majRoles: Succès updateRoles");
@@ -161,8 +161,7 @@ class ConnexionControlleur {
             $this->logs->log("toggleUser-entree dans if");
             $userId = intval($_POST['id']);
 
-            $dashboardModel = new Dashboard();
-            $dashboardModel->changerStatutUtilisateur($userId);
+            $this->dashboardModel->changerStatutUtilisateur($userId);
         }
     }
 
@@ -181,8 +180,7 @@ class ConnexionControlleur {
                 if ($userId === $session->get('user_id')) {
                     // On peut ajouter un message flash ici si vous en avez
                 } else {
-                    $dashboardModel = new Dashboard();
-                    $dashboardModel->supprimerUtilisateur($userId);
+                    $this->dashboardModel->supprimerUtilisateur($userId);
                 }
             }
         }
@@ -193,8 +191,7 @@ class ConnexionControlleur {
     public function changerStatutArticle() {
         if ($this->permissions->UtilisateurAPermission('article_editer_tous')) {
             if (isset($_POST['article_id']) && isset($_POST['statut'])) {
-                $dashboardModel = new Dashboard();
-                $dashboardModel->MiseAJourArticleStatus($_POST['article_id'], $_POST['statut']);
+                $this->dashboardModel->MiseAJourArticleStatus($_POST['article_id'], $_POST['statut']);
             }
         }
         header('Location: /connexion');
@@ -204,8 +201,7 @@ class ConnexionControlleur {
     public function supprimerArticle() {
         if ($this->permissions->UtilisateurAPermission('article_supprimer')) {
             if (isset($_POST['article_id'])) {
-                $dashboardModel = new Dashboard();
-                $dashboardModel->supprimerArticle($_POST['article_id']);
+                $this->dashboardModel->supprimerArticle($_POST['article_id']);
             }
         }
         header('Location: /connexion');
@@ -215,8 +211,7 @@ class ConnexionControlleur {
     public function changerStatutCommentaire() {
         if ($this->permissions->UtilisateurAPermission('commentaire_gerer')) {
             if (isset($_POST['comment_id']) && isset($_POST['statut'])) {
-                $dashboardModel = new Dashboard();
-                $dashboardModel->miseAJourStatutCommentaire($_POST['comment_id'], $_POST['statut']);
+                $this->dashboardModel->miseAJourStatutCommentaire($_POST['comment_id'], $_POST['statut']);
             }
         }
         header('Location: /connexion');
@@ -226,8 +221,27 @@ class ConnexionControlleur {
     public function supprimerCommentaire() {
         if ($this->permissions->UtilisateurAPermission('commentaire_gerer')) {
             if (isset($_POST['comment_id'])) {
-                $dashboardModel = new Dashboard();
-                $dashboardModel->supprimerCommentaire($_POST['comment_id']);
+                $this->dashboardModel->supprimerCommentaire($_POST['comment_id']);
+            }
+        }
+        header('Location: /connexion');
+        exit;
+    }
+
+    public function ajouterTag() {
+        if ($this->permissions->UtilisateurAPermission('tag_gerer')) {
+            if (!empty($_POST['nom_tag'])) {
+                $this->dashboardModel->creerTag(htmlspecialchars($_POST['nom_tag']));
+            }
+        }
+        header('Location: /connexion');
+        exit;
+    }
+
+    public function supprimerTag() {
+        if ($this->permissions->UtilisateurAPermission('tag_gerer')) {
+            if (!empty($_POST['tag_id'])) {
+                $this->dashboardModel->supprimerTag($_POST['tag_id']);
             }
         }
         header('Location: /connexion');
