@@ -9,7 +9,7 @@ class CommentaireControlleur
 
     public function posterCommentaire() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $articleId = $_POST['article_id'];
+            $articleId = filter_input(INPUT_POST, 'article_id', FILTER_SANITIZE_NUMBER_INT);
             $contenu = htmlspecialchars($_POST['contenu']);
             
             // Gestion utilisateur connecté ou visiteur
@@ -18,11 +18,14 @@ class CommentaireControlleur
                 $nom = $session->get('username');
                 $email = $session->get('email');
             } else {
-                $nom = htmlspecialchars($_POST['nom_auteur']);
+                $inputNom = trim($_POST['nom_auteur']);
+                $nom = !empty($inputNom) ? htmlspecialchars($inputNom) : 'Anonyme';
                 $email = htmlspecialchars($_POST['email_auteur']);
             }
 
-            $this->articleModel->ajouterCommentaire($articleId, $nom, $email, $contenu);
+            if ($articleId && $contenu && $email) {
+                $this->articleModel->ajouterCommentaire($articleId, $nom, $email, $contenu);
+            }
             
             // Redirection vers l'article
             header("Location: /article?id=" . $articleId);

@@ -16,12 +16,12 @@
 			
 			{% if session.get('user_id') is empty %}
 				<div class="mb-3">
-					<label class="form-label">Nom :</label>
-					<input type="text" name="nom_auteur" class="form-control" required>
+					<label class="form-label">Nom (Facultatif, "Anonyme" par défaut) :</label>
+					<input type="text" name="nom_auteur" class="form-control">
 				</div>
 				<div class="mb-3">
-					<label class="form-label">Email :</label>
-					<input type="email" name="email_auteur" class="form-control">
+					<label class="form-label">Email (Obligatoire) :</label>
+					<input type="email" name="email_auteur" class="form-control" required>
 				</div>
 			{% else %}
 				<p>Connecté en tant que <strong>{{ session.get('username') }}</strong></p>
