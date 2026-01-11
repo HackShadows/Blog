@@ -83,6 +83,20 @@ footer {
 	grid-area: footer;
 }
 
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto; 
+    padding: 0 1rem;
+}
+
+.footer-content .btn {
+    margin-top: 0; 
+    font-size: 0.8rem;
+}
+
 .title {
 	text-align: center;
 	color: var(--font-color);
