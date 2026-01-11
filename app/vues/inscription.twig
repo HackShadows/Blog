@@ -1,55 +1,36 @@
 {% extends "base.twig" %}
 
 {% block main %}
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6 col-lg-5">
-            <div class="card shadow-sm border-0 rounded-lg">
-                <div class="card-header bg-dark text-white text-center py-3">
-                    <h3 class="mb-0">Créer un compte</h3>
-                </div>
-                <div class="card-body p-4">
-                    
-                    {# Affichage des erreurs #}
-                    {% if error %}
-                        <div class="alert alert-danger">{{ error }}</div>
-                    {% endif %}
+    {# Titre avec la classe .title de style.css #}
+    <h1 class="title" id="contactFormTitle">Créer un compte</h1>
 
-                    <form action="/traitementInscription" method="POST">
-                        <div class="mb-3">
-                            <label for="username" class="form-label">Nom d'utilisateur</label>
-                            <input type="text" class="form-control" id="username" name="username" 
-                                   value="{{ data.username }}" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Adresse Email</label>
-                            <input type="email" class="form-control" id="email" name="email" 
-                                   value="{{ data.email }}" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="password" class="form-label">Mot de passe</label>
-                            <input type="password" class="form-control" id="password" name="password" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="confirm_password" class="form-label">Confirmer le mot de passe</label>
-                            <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
-                        </div>
-
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary btn-lg">S'inscrire</button>
-                        </div>
-                    </form>
-                </div>
-                <div class="card-footer text-center py-3">
-                    <div class="small">
-                        <a href="/connexion">Vous avez déjà un compte ? Se connecter</a>
-                    </div>
-                </div>
+    {# Utilisation de l'ID contactForm pour récupérer le style exact de connexion #}
+    <form action="/traitementInscription" method="POST" id="contactForm">
+        
+        {# Gestion des erreurs #}
+        {% if error %}
+            <div class="alert alert-danger" role="alert" style="font-size: 0.9rem;">
+                {{ error }}
             </div>
+        {% endif %}
+
+        <label for="username">Nom d'utilisateur :</label>
+        <input type="text" id="username" name="username" value="{{ data.username }}" required>
+
+        <label for="email">Email :</label>
+        <input type="email" id="email" name="email" value="{{ data.email }}" required>
+
+        <label for="password">Mot de passe :</label>
+        <input type="password" id="password" name="password" required>
+
+        <label for="confirm_password">Confirmer le mot de passe :</label>
+        <input type="password" id="confirm_password" name="confirm_password" required>
+
+        <button type="submit">S'inscrire</button>
+
+        {# Lien de retour #}
+        <div style="margin-top: 15px; text-align: center; font-size: 0.9em;">
+            <a href="/connexion">Déjà un compte ? Se connecter</a>
         </div>
-    </div>
-</div>
+    </form>
 {% endblock %}

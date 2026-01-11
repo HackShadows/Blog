@@ -2,6 +2,11 @@
 
 {% block main %}
 	<h1 class="title" id="contactFormTitle">Se connecter</h1>
+
+	{% if erreur is defined and erreur is not empty %}
+         <div class="alert alert-danger text-center w-50 mx-auto">{{ erreur }}</div>
+    {% endif %}
+
 	<form name="contactForm" id="contactForm" @submit.prevent="validate" method="POST">
 		{# <label for="nom">Nom :</label>
 		<input type="text" id="nom" name="nom" x-model="nom">
@@ -22,22 +27,9 @@
 		</template>
 
 		<button type="submit">Se connecter</button>
+
+		<div style="margin-top: 15px; text-align: center; font-size: 0.9em;">
+            <a href="/inscription">Pas encore de compte ? S'inscrire</a>
+        </div>
 	</form>
-	<!-- <template x-if="successMessage">
-						<p style="color: green; margin-top: 1rem;" x-text="successMessage"></p>
-					</template> -->
-	<div class="modal-overlay" x-show="modalOpen" x-transition @keydown.escape.window="modalOpen = false" x-cloak>
-		<div class="modal-container" x-on:click.away="modalOpen = false">
-			<div class="modal-content">
-				<div class="modal-body">
-					<p>✅ Message envoyé avec succès !</p>
-				</div>
-				<div class="mt-4">
-					<button class="btn" @click="modalOpen = false" x-ref="modalCloseButton">
-						Fermer
-					</button>
-				</div>
-			</div>
-		</div>
-	</div>
 {% endblock %}
