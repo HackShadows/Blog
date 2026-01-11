@@ -44,7 +44,7 @@ class ArticleControlleur
                 exit;
             }
         }
-		
+
 		$commentaires = $this->articleModel->getCommentaire($articleId);
 
 		$this->logs->log("ouvrir article id=" . strval($article["id"]));
@@ -68,7 +68,6 @@ class ArticleControlleur
 
 	public function traitementCreation()
 	{
-		// 1. Vérification des permissions
 		if (!$this->permissions->UtilisateurAPermission('article_creer')) {
 			header('Location: /accueil');
 			exit;
@@ -76,27 +75,25 @@ class ArticleControlleur
 
 		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			$titre = trim($_POST['titre']);
-			$contenu = $_POST['contenu']; // Le Markdown brut
+			$contenu = $_POST['contenu'];
 			$statut = $_POST['statut'];
+
+			$image = $this->uploadImage();
 
 			if (!$this->permissions->UtilisateurAPermission('article_publier')) {
 				$statut = 'Brouillon';
 			}
 			
 			$userId = $this->session->get('user_id');
-
-			// Génération du Slug (Titre -> titre-de-l-article)
-			// On remplace les accents et caractères spéciaux
 			$slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', iconv('UTF-8', 'ASCII//TRANSLIT', $titre))));
 
 			if (!empty($titre) && !empty($contenu) && !empty($userId)) {
-				$result = $this->articleModel->creerArticle($titre, $slug, $contenu, $userId, $statut);
+				$result = $this->articleModel->creerArticle($titre, $slug, $contenu, $userId, $statut, $image);
 				
 				if ($result === true) {
-					header('Location: /accueil'); // Ou vers le dashboard
+					header('Location: /accueil');
 					exit;
 				} else {
-					// Erreur (ex: slug dupliqué)
 					echo $this->twig->render('creer_article.twig', [
 						'error' => is_string($result) ? $result : "Erreur lors de la création.",
 						'data' => $_POST,
@@ -144,6 +141,11 @@ class ArticleControlleur
 			$titre = trim($_POST['titre']);
 			$contenu = $_POST['contenu'];
 			$statut = $_POST['statut'];
+
+			$image = $this->uploadImage();
+			if (!$image) {
+				$image = $_POST['current_image'] ?? null;
+			}
 			
 			// RÈGLE MÉTIER : Si pas de permission publier, on force le statut Brouillon
 			if (!$this->permissions->UtilisateurAPermission('article_publier')) {
@@ -153,7 +155,7 @@ class ArticleControlleur
 			// Régénération du slug (au cas où le titre change)
 			$slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', iconv('UTF-8', 'ASCII//TRANSLIT', $titre))));
 
-			$result = $this->articleModel->miseAJourArticle($id, $titre, $slug, $contenu, $statut);
+			$result = $this->articleModel->miseAJourArticle($id, $titre, $slug, $contenu, $statut, $image);
 
 			if ($result === true) {
 				header('Location: /connexion');
@@ -171,5 +173,28 @@ class ArticleControlleur
 				]);
 			}
 		}
+	}
+
+	private function uploadImage() {
+		if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+			$tmpName = $_FILES['image']['tmp_name'];
+			$name = basename($_FILES['image']['name']);
+			$ext = strtolower(pathinfo($name, PATHINFO_EXTENSION));
+			$allowed = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
+
+			if (in_array($ext, $allowed)) {
+				$newName = uniqid('img_', true) . '.' . $ext;
+				$uploadDir = __DIR__ . '/../../public/uploads/';
+				
+				if (!is_dir($uploadDir)) {
+					mkdir($uploadDir, 0755, true);
+				}
+
+				if (move_uploaded_file($tmpName, $uploadDir . $newName)) {
+					return $newName;
+				}
+			}
+		}
+		return null;
 	}
 }

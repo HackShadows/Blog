@@ -20,13 +20,12 @@
         [data-bs-theme="dark"] .editor-toolbar button:hover { background-color: #444; }
     </style>
 
-    {# L'action change selon le mode #}
     <form action="{{ is_edit ? '/traitementEdition' : '/traitementCreation' }}" 
-          method="POST" id="contactForm" class="mx-auto" style="max-width: 800px;">
+          method="POST" id="contactForm" class="mx-auto" style="max-width: 800px;" 
+          enctype="multipart/form-data">
         
         {% if error %} <div class="alert alert-danger">{{ error }}</div> {% endif %}
 
-        {# Champ caché ID (seulement en édition) #}
         {% if is_edit %}
             <input type="hidden" name="article_id" value="{{ article_id }}">
         {% endif %}
@@ -34,10 +33,22 @@
         <label for="titre">Titre :</label>
         <input type="text" id="titre" name="titre" value="{{ data.titre }}" required>
 
+        <label for="image">Image à la une :</label>
+        <input type="file" name="image" id="image" class="form-control mb-3" accept="image/*" 
+               style="background-color: var(--bg2); color: var(--font-color); border: 1px solid #ccc;">
+        
+        {% if data.image_une %}
+            <div class="mb-3 text-center">
+                <p>Image actuelle :</p>
+                <img src="/uploads/{{ data.image_une }}" alt="Image actuelle" style="max-height: 150px; border-radius: 5px;">
+                {# Champ caché pour conserver l'image si on n'en renvoie pas une nouvelle #}
+                <input type="hidden" name="current_image" value="{{ data.image_une }}">
+            </div>
+        {% endif %}
+
         <label for="statut">Statut :</label>
         <select name="statut" id="statut" class="form-select mb-3" style="background-color: var(--bg2); color: var(--font-color); border: none; padding: 10px; border-radius: 4px;">
             <option value="Brouillon" {{ data.statut == 'Brouillon' ? 'selected' : '' }}>Brouillon</option>
-            
             {% if peutPublier %}
                 <option value="Publié" {{ data.statut == 'Publié' ? 'selected' : '' }}>Publié</option>
                 <option value="Archivé" {{ data.statut == 'Archivé' ? 'selected' : '' }}>Archivé</option>
@@ -47,11 +58,10 @@
         <label for="contenu">Contenu :</label>
         <textarea id="contenu" name="contenu">{{ data.contenu }}</textarea>
 
-		<div class="d-flex gap-3 mt-3">
+        <div class="d-flex gap-3 mt-3">
             <button type="submit" class="btn btn-primary">
                 {{ is_edit ? "Mettre à jour" : "Enregistrer" }}
             </button>
-
             <a href="/connexion" class="btn btn-secondary text-decoration-none text-white d-flex align-items-center">
                 Annuler
             </a>

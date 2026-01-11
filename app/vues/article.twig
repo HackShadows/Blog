@@ -1,6 +1,12 @@
 {% extends "base.twig" %}
 
 {% block main %}
+	{% if article.image_une %}
+        <div class="text-center mb-4">
+            <img src="/uploads/{{ article.image_une }}" alt="{{ article.titre }}" class="img-fluid rounded shadow" style="max-height: 400px; width: auto;">
+        </div>
+    {% endif %}
+
 	<h1 class="title" id="articleTitle">Article {{ article["id"] }} : {{ article["titre"] }}</h1>
 	<article class="articleContent">{{ article["contenu"] | raw }}</article>
 	<h3>Date de Mise à jour : {{ article["date_mise_a_jour"] }}</h3>

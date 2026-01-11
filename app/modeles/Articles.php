@@ -55,32 +55,27 @@ class Articles
 		return $query->fetchAll(PDO::FETCH_ASSOC);
 	}
 
-	public function creerArticle($titre, $slug, $contenu, $userId, $statut)
+	public function creerArticle($titre, $slug, $contenu, $userId, $statut, $image = null)
 	{
 		try {
-			$query = $this->db->prepare("INSERT INTO Articles (titre, slug, contenu, utilisateur_id, statut, date_creation, date_mise_a_jour) 
-										VALUES (?, ?, ?, ?, ?, NOW(), NOW())");
-			return $query->execute([$titre, $slug, $contenu, $userId, $statut]);
+			$query = $this->db->prepare("INSERT INTO Articles (titre, slug, contenu, utilisateur_id, statut, image_une, date_creation, date_mise_a_jour) 
+										VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())");
+			return $query->execute([$titre, $slug, $contenu, $userId, $statut, $image]);
 		} catch (PDOException $e) {
-			// Gestion des doublons de slug
-			if ($e->getCode() == 23000) {
-				return "Ce titre existe déjà (le slug est dupliqué).";
-			}
+			if ($e->getCode() == 23000) return "Ce titre existe déjà.";
 			return false;
 		}
 	}
 
-	public function MiseAJourArticle($id, $titre, $slug, $contenu, $statut)
+	public function miseAJourArticle($id, $titre, $slug, $contenu, $statut, $image = null)
 	{
 		try {
 			$query = $this->db->prepare("UPDATE Articles 
-										SET titre = ?, slug = ?, contenu = ?, statut = ?, date_mise_a_jour = NOW() 
+										SET titre = ?, slug = ?, contenu = ?, statut = ?, image_une = ?, date_mise_a_jour = NOW() 
 										WHERE id = ?");
-			return $query->execute([$titre, $slug, $contenu, $statut, $id]);
+			return $query->execute([$titre, $slug, $contenu, $statut, $image, $id]);
 		} catch (PDOException $e) {
-			if ($e->getCode() == 23000) {
-				return "Ce titre existe déjà (le slug est dupliqué).";
-			}
+			if ($e->getCode() == 23000) return "Ce titre existe déjà.";
 			return false;
 		}
 	}
