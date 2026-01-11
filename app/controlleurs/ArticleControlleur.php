@@ -48,9 +48,11 @@ class ArticleControlleur
 			exit;
 		}
 
-		// On passe 'url' pour le menu
+		$peutPublier = $this->permissions->hasPermission('article_publier');
+
 		echo $this->twig->render('creer_article.twig', [
-			'articlesNav' => $this->articleModel->getArticlesNav()
+			'articlesNav' => $this->articleModel->getArticlesNav(),
+			'peutPublier' => $peutPublier
 		]);
 	}
 
@@ -66,6 +68,10 @@ class ArticleControlleur
 			$titre = trim($_POST['titre']);
 			$contenu = $_POST['contenu']; // Le Markdown brut
 			$statut = $_POST['statut'];
+
+			if (!$this->permissions->hasPermission('article_publier')) {
+				$statut = 'Brouillon';
+			}
 			
 			$session = SessionManager::getInstance();
 			$userId = $session->get('user_id');

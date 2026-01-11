@@ -44,8 +44,10 @@
         <label for="statut">Statut :</label>
         <select name="statut" id="statut" class="form-select mb-3" style="background-color: var(--bg2); color: var(--font-color); border: none; padding: 10px; border-radius: 4px;">
             <option value="Brouillon">Brouillon</option>
-            <option value="Publié">Publié</option>
-            <option value="Archivé">Archivé</option>
+            {% if peutPublier %}
+				<option value="Publié">Publié</option>
+				<option value="Archivé">Archivé</option>
+			{% endif %}
         </select>
 
         <label for="contenu">Contenu (Markdown) :</label>
