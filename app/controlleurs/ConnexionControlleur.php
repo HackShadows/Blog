@@ -26,17 +26,24 @@ class ConnexionControlleur
 		$this->logs->log("dashboard");
         $userId = $session->get('user_id');
 
-		$rolesConnecte = ['Administrateur' => $this->permissions->hasRole('Administrateur'), 'Contributeur' => $this->permissions->hasRole('Contributeur'), 'Éditeur' => $this->permissions->hasRole('Éditeur')];
+		$rolesPermissions = ['admin_acces' => $this->permissions->hasPermission('admin_acces'),
+            'article_creer' => $this->permissions->hasPermission('article_creer'),
+            'article_editer_tous' => $this->permissions->hasPermission('article_editer_tous'),
+            'article_publier' => $this->permissions->hasPermission('article_publier'),
+            'article_supprimer' => $this->permissions->hasPermission('article_supprimer'),
+            'commentaire_gerer' => $this->permissions->hasPermission('commentaire_gerer'),
+            'tag_gerer' => $this->permissions->hasPermission('tag_gerer'),
+            'utilisateur_gerer' => $this->permissions->hasPermission('utilisateur_gerer')];
         $dashboardModel = new Dashboard();
         $listeUtilisateurs = [];
         $tousLesRoles = [];
-        if ($rolesConnecte['Administrateur']) {
+        if ($rolesPermissions['utilisateur_gerer']) {
             $listeUtilisateurs = $dashboardModel->getUtilisateursAvecRoles();
             $tousLesRoles = $dashboardModel->getAllRoles();
         }
         echo $this->twig->render('dashboard.twig', [
             'userId' => $userId,
-            'roles' => $rolesConnecte,
+            'permissions' => $rolesPermissions,
             'listeUtilisateurs' => $listeUtilisateurs,
             'tousLesRoles' => $tousLesRoles,
 			'articlesNav' => $this->articleModel->getArticlesNav()
