@@ -1,62 +1,46 @@
 <hr class="my-5">
 <section id="commentaires">
 	<div class="d-flex justify-content-between align-items-center mb-4">
-		<h1 class="h1">Gestion des Commentaires</h1>
+		<h2 class="h1">Gestion des Commentaires</h2>
 
 		<form action="/connexion" method="POST">
 			<div class="btn-group" role="group">
-				<button type="submit" name="filter_comm" value="En attente"
-						class="btn {{ filtreActuel == 'En attente' ? 'btn-primary' : 'btn-outline-primary' }}">
-					En attente
-				</button>
-				<button type="submit" name="filter_comm" value="Rejeté"
-						class="btn {{ filtreActuel == 'Rejeté' ? 'btn-primary' : 'btn-outline-primary' }}">
-					Rejeté
-				</button>
-				<button type="submit" name="filter_comm" value="Approuvé"
-						class="btn {{ filtreActuel == 'Approuvé' ? 'btn-primary' : 'btn-outline-primary' }}">
-					Approuvé
-				</button>
-				<button type="submit" name="filter_comm" value="tous"
-						class="btn {{ filtreActuel == 'tous' ? 'btn-primary' : 'btn-outline-primary' }}">
-					Tous
-				</button>
+				<button type="submit" name="filter_comm" value="En attente" class="btn {{ filtreActuel == 'En attente' ? 'btn-primary' : 'btn-outline-primary' }}">En attente</button>
+				<button type="submit" name="filter_comm" value="Rejeté" class="btn {{ filtreActuel == 'Rejeté' ? 'btn-primary' : 'btn-outline-primary' }}">Rejeté</button>
+				<button type="submit" name="filter_comm" value="Approuvé" class="btn {{ filtreActuel == 'Approuvé' ? 'btn-primary' : 'btn-outline-primary' }}">Approuvé</button>
+				<button type="submit" name="filter_comm" value="tous" class="btn {{ filtreActuel == 'tous' ? 'btn-primary' : 'btn-outline-primary' }}">Tous</button>
 			</div>
 		</form>
 	</div>
 
 	<div class="table-responsive">
-		<table class="table table-hover align-middle">
-			<thead class="table-light">
-			<tr>
-				<th>Auteur</th>
-				<th>Commentaire</th>
-				<th>Article</th>
-				<th>Date</th>
-				<th>Statut</th>
-				<th class="text-end">Actions</th>
-			</tr>
+		<table class="table table-striped table-hover align-middle">
+			<thead class="table-dark">
+				<tr>
+					<th style="width: 15%;">Date</th>
+					<th style="width: 15%;">Auteur</th>
+					<th style="width: 40%;">Commentaire / Article</th>
+					<th style="width: 10%;">Statut</th>
+					<th style="width: 20%;" class="text-end">Actions</th>
+				</tr>
 			</thead>
 			<tbody>
 			{% for comm in listeCommentaires %}
 				<tr>
+					<td class="small">{{ comm.date_commentaire|date("d/m/Y H:i") }}</td>
 					<td>
-						<div class="fw-bold">{{ comm.nom_auteur }}</div>
-						<div class="small text-muted">{{ comm.email_auteur }}</div>
+						<strong>{{ comm.nom_auteur }}</strong><br>
+						<small class="text-muted">{{ comm.email_auteur }}</small>
 					</td>
 					<td>
-						<div style="max-height: 80px; overflow-y: auto;">
-							{{ comm.contenu }}
-						</div>
+						<p class="mb-1 text-break">"{{ comm.contenu }}"</p>
+						<small class="text-muted">
+							Sur l'article : 
+                            <a href="/{{ comm.slug }}?id={{ comm.article_id }}" target="_blank" class="text-decoration-none">
+                                {{ comm.titre_article }}
+                            </a>
+						</small>
 					</td>
-					<td>
-						<a href="/{{ comm.slug }}?id={{ comm.article_id }}" target="_blank">
-							{{ comm.titre_article }}
-						</a>
-					</td>
-					<td>{{ comm.date_commentaire|date("d/m/Y H:i") }}</td>
-
-					{# Badge Statut #}
 					<td>
 						{% if comm.statut == 'En attente' %}
 							<span class="badge bg-warning text-dark">En attente</span>
@@ -66,17 +50,13 @@
 							<span class="badge bg-danger">Rejeté</span>
 						{% endif %}
 					</td>
-
 					<td class="text-end">
 						<div class="d-flex justify-content-end gap-1">
-
 							{% if comm.statut != 'Approuvé' %}
 								<form action="/changerStatutCommentaire" method="POST">
 									<input type="hidden" name="comment_id" value="{{ comm.id }}">
 									<input type="hidden" name="statut" value="Approuvé">
-									<button type="submit" class="btn btn-sm btn-success" title="Approuver">
-										✓
-									</button>
+									<button type="submit" class="btn btn-sm btn-success" title="Approuver">✓</button>
 								</form>
 							{% endif %}
 
@@ -84,27 +64,19 @@
 								<form action="/changerStatutCommentaire" method="POST">
 									<input type="hidden" name="comment_id" value="{{ comm.id }}">
 									<input type="hidden" name="statut" value="Rejeté">
-									<button type="submit" class="btn btn-sm btn-warning" title="Rejeter">
-										⚠
-									</button>
+									<button type="submit" class="btn btn-sm btn-warning" title="Rejeter">⚠</button>
 								</form>
 							{% endif %}
 
 							<form action="/supprimerCommentaire" method="POST" onsubmit="return confirm('Supprimer ce commentaire ?');">
 								<input type="hidden" name="comment_id" value="{{ comm.id }}">
-								<button type="submit" class="btn btn-sm btn-danger" title="Supprimer">
-									X
-								</button>
+								<button type="submit" class="btn btn-sm btn-danger" title="Supprimer">X</button>
 							</form>
 						</div>
 					</td>
 				</tr>
 			{% else %}
-				<tr>
-					<td colspan="6" class="text-center py-4 text-muted">
-						Aucun commentaire trouvé pour le filtre : {{ filtreActuel }}.
-					</td>
-				</tr>
+				<tr><td colspan="5" class="text-center py-4">Aucun commentaire trouvé.</td></tr>
 			{% endfor %}
 			</tbody>
 		</table>

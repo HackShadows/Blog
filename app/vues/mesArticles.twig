@@ -16,7 +16,11 @@
         <tbody>
             {% for article in mesArticles %}
                 <tr>
-                    <td>{{ article.titre }}</td>
+                    <td>
+                        <a href="/{{ article.slug }}?id={{ article.id }}" target="_blank" class="fw-bold text-decoration-none text-body">
+                            {{ article.titre }}
+                        </a>
+                    </td>
                     <td>{{ article.date_mise_a_jour|date("d/m/Y H:i") }}</td>
                     <td>
                         {% if article.statut == 'Publié' %}
@@ -28,9 +32,6 @@
                         {% endif %}
                     </td>
                     <td class="text-center">
-						<a href="/{{ article.slug }}?id={{ article.id }}" class="btn btn-info btn-sm text-white" title="Voir l'article">
-                            👁️ Voir
-                        </a>
                         <a href="/editer-article?id={{ article.id }}" class="btn btn-primary btn-sm">
                             ✏️ Modifier
                         </a>

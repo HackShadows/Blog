@@ -1,11 +1,11 @@
 <hr class="my-5">
 <div class="d-flex justify-content-between align-items-center mb-3">
-	<h1>Gestion des Articles</h1>
+	<h2>Gestion des Articles</h2>
 </div>
 
 <div class="table-responsive">
-	<table class="table table-bordered table-hover align-middle">
-		<thead class="table-light">
+	<table class="table table-striped table-hover align-middle">
+		<thead class="table-dark">
 		<tr>
 			<th>Titre</th>
 			<th>Auteur</th>
@@ -19,9 +19,11 @@
 		{% for article in tousLesArticles %}
 			<tr>
 				<td>
-					<strong>{{ article.titre }}</strong>
+					<a href="/{{ article.slug }}?id={{ article.id }}" target="_blank" class="fw-bold text-decoration-none text-body">
+						{{ article.titre }}
+					</a>
 					<br>
-					<small class="text-muted">Slug: {{ article.slug }}</small>
+					<small class="text-muted" style="font-size: 0.8rem;">Slug: {{ article.slug }}</small>
 				</td>
 				<td>{{ article.nom_utilisateur }}</td>
 				<td>{{ article.date_creation|date("d/m/Y H:i") }}</td>
@@ -38,14 +40,11 @@
 
 				<td class="text-center">
 					<div class="d-flex justify-content-center gap-2">
-
 						{% if article.statut != 'Publié' %}
 							<form action="/changerStatutArticle" method="POST">
 								<input type="hidden" name="article_id" value="{{ article.id }}">
 								<input type="hidden" name="statut" value="Publié">
-								<button type="submit" class="btn btn-sm btn-success" title="Publier">
-									Publier
-								</button>
+								<button type="submit" class="btn btn-sm btn-success" title="Publier">Publier</button>
 							</form>
 						{% endif %}
 
@@ -53,9 +52,7 @@
 							<form action="/changerStatutArticle" method="POST">
 								<input type="hidden" name="article_id" value="{{ article.id }}">
 								<input type="hidden" name="statut" value="Archivé">
-								<button type="submit" class="btn btn-sm btn-warning" title="Archiver">
-									Archiver
-								</button>
+								<button type="submit" class="btn btn-sm btn-warning" title="Archiver">Archiver</button>
 							</form>
 						{% endif %}
 
@@ -63,12 +60,9 @@
 							<form action="/changerStatutArticle" method="POST">
 								<input type="hidden" name="article_id" value="{{ article.id }}">
 								<input type="hidden" name="statut" value="Brouillon">
-								<button type="submit" class="btn btn-sm btn-secondary" title="Mettre en brouillon">
-									Brouillon
-								</button>
+								<button type="submit" class="btn btn-sm btn-secondary" title="Mettre en brouillon">Brouillon</button>
 							</form>
 						{% endif %}
-
 					</div>
 				</td>
 
@@ -76,14 +70,12 @@
 					<form action="/supprimerArticle" method="POST"
 						  onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet article ?');">
 						<input type="hidden" name="article_id" value="{{ article.id }}">
-						<button type="submit" class="btn btn-sm btn-danger">X</button>
+						<button type="submit" class="btn btn-danger btn-sm">🗑️</button>
 					</form>
 				</td>
 			</tr>
 		{% else %}
-			<tr>
-				<td colspan="6" class="text-center">Aucun article trouvé.</td>
-			</tr>
+			<tr><td colspan="6" class="text-center">Aucun article trouvé.</td></tr>
 		{% endfor %}
 		</tbody>
 	</table>

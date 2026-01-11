@@ -9,59 +9,65 @@
             <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zM8 1.918l-.797.161A4.002 4.002 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4.002 4.002 0 0 0-3.203-3.92L8 1.917zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5.002 5.002 0 0 1 13 6c0 .88.32 4.2 1.22 6z"/>
         </svg>
 
-        {% if notifications.total > 0 %}
+        {% set totalNotifs = 0 %}
+        {% if notifications.articles is defined %}
+            {% set totalNotifs = totalNotifs + notifications.articles|length %}
+        {% endif %}
+        {% if notifications.commentaires is defined %}
+            {% set totalNotifs = totalNotifs + notifications.commentaires|length %}
+        {% endif %}
+
+        {% if totalNotifs > 0 %}
             <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                        {{ notifications.total }}
-                        <span class="visually-hidden">notifications en attente</span>
-                    </span>
+                {{ totalNotifs }}
+            </span>
         {% endif %}
     </button>
 
-    <div x-show="notifOpen"
-         x-transition.opacity
-         x-cloak
+    <div x-show="notifOpen" 
          @click.away="notifOpen = false"
-         style="position: absolute; top: 50px; right: 0; width: 400px; max-width: 90vw; background: white; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; overflow: hidden;">
-
-        <div class="p-3 border-bottom bg-light d-flex justify-content-between align-items-center">
-            <h5 class="m-0 h6">En attente de validation</h5>
-            <button type="button" class="btn-close btn-sm" @click="notifOpen = false"></button>
-        </div>
-
-        <div class="list-group list-group-flush" style="max-height: 400px; overflow-y: auto;">
-
-            {% if notifications.total == 0 %}
-                <div class="p-3 text-center text-muted">
-                    <small>Rien à signaler.</small>
+         x-transition
+         class="card shadow"
+         style="position: absolute; top: 40px; right: 0; width: 350px; z-index: 1000; background-color: var(--bg2); color: var(--font-color); border: 1px solid var(--bg3);">
+        
+        <div class="list-group list-group-flush">
+            
+            {% if totalNotifs == 0 %}
+                <div class="list-group-item text-center py-3" style="background-color: var(--bg2); color: var(--font-color);">
+                    <small>Aucune nouvelle notification</small>
                 </div>
             {% endif %}
 
-            {% if notifications.articles is not empty %}
-                <div class="list-group-item bg-light text-uppercase fw-bold" style="font-size: 0.75rem;">
-                    Articles en attente ({{ notifications.articles|length }})
+            {% if notifications.articles is defined and notifications.articles is not empty %}
+                <div class="list-group-item text-uppercase fw-bold" 
+                     style="font-size: 0.75rem; background-color: var(--bg3); color: var(--font-color); border-bottom: 1px solid #444;">
+                    Articles en attente de publication ({{ notifications.articles|length }})
                 </div>
                 {% for art in notifications.articles %}
-                    <div class="list-group-item">
+                    <div class="list-group-item" style="background-color: var(--bg2); color: var(--font-color); border-bottom: 1px solid var(--bg3);">
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <strong>{{ art.titre }}</strong>
-                                <div class="text-muted small">Par {{ art.nom_utilisateur }}</div>
-                                <div class="text-muted small">{{ art.date_creation|date("d/m/Y") }}</div>
+                                <a href="/{{ art.slug }}?id={{ art.id }}" target="_blank" class="fw-bold text-decoration-none" style="color: var(--font-color);">
+                                    {{ art.titre }}
+                                </a>
+                                <div class="small" style="opacity: 0.8;">Par {{ art.nom_utilisateur }}</div>
+                                <div class="small" style="opacity: 0.8;">{{ art.date_creation|date("d/m/Y") }}</div>
                             </div>
                         </div>
                     </div>
                 {% endfor %}
             {% endif %}
 
-            {% if notifications.commentaires is not empty %}
-                <div class="list-group-item bg-light text-uppercase fw-bold" style="font-size: 0.75rem;">
+            {% if notifications.commentaires is defined and notifications.commentaires is not empty %}
+                <div class="list-group-item text-uppercase fw-bold" 
+                     style="font-size: 0.75rem; background-color: var(--bg3); color: var(--font-color); border-bottom: 1px solid #444;">
                     Commentaires à valider ({{ notifications.commentaires|length }})
                 </div>
                 {% for comm in notifications.commentaires %}
-                    <div class="list-group-item">
+                    <div class="list-group-item" style="background-color: var(--bg2); color: var(--font-color); border-bottom: 1px solid var(--bg3);">
                         <p class="mb-1 small text-truncate">"{{ comm.contenu }}"</p>
                         <div class="d-flex justify-content-between align-items-center">
-                            <small class="text-muted">
+                            <small style="opacity: 0.8;">
                                 Sur : <em>{{ comm.titre }}</em><br>
                                 Par : {{ comm.nom_auteur }}
                             </small>

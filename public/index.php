@@ -36,6 +36,16 @@ $logger->log($uri);
 
 switch ($uri) {
     case '/':
+		if (isset($_GET['id']) && !empty($_GET['id'])) {
+            try {
+                $ArticleControlleur->article($_GET['id']);
+            } catch (Exception $e) {
+                $ArticleControlleur->index($e->getMessage());
+            }
+        } else {
+            $ArticleControlleur->index(null);
+        }
+        break;
     case '/accueil':
         $ArticleControlleur->index(null);
         break;
