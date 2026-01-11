@@ -1,32 +1,28 @@
 <?php // app/controlleurs/ConnexionControlleur.php
-class ConnexionControlleur
-{
-	private $twig;
-	private $logs;
-	private $permissions;
-	private $articleModel;
+class ConnexionControlleur {
+    private $twig;
+    private $logs;
+    private $permissions;
+    private $articleModel;
 
-	public function __construct(Twig\Environment $twig)
-	{
-		$this->logs = Logger::getInstance();
-		$this->twig = $twig;
-		$this->permissions = new Permissions();
-		$this->articleModel = new Articles();
-	}
+    public function __construct(Twig\Environment $twig) {
+        $this->logs = Logger::getInstance();
+        $this->twig = $twig;
+        $this->permissions = new Permissions();
+        $this->articleModel = new Articles();
+    }
 
-	public function index()
-	{
-		$this->logs->log("connexion");
-		echo $this->twig->render('connexion.twig', ['articlesNav' => $this->articleModel->getArticlesNav()]);
-	}
+    public function index() {
+        $this->logs->log("connexion");
+        echo $this->twig->render('connexion.twig', ['articlesNav' => $this->articleModel->getArticlesNav()]);
+    }
 
-	public function dashboard($userEmail)
-	{
+    public function dashboard($userEmail) {
         $session = SessionManager::getInstance();
-		$this->logs->log("dashboard");
+        $this->logs->log("dashboard");
         $userId = $session->get('user_id');
 
-		$rolesPermissions = ['admin_acces' => $this->permissions->hasPermission('admin_acces'),
+        $rolesPermissions = ['admin_acces' => $this->permissions->hasPermission('admin_acces'),
             'article_creer' => $this->permissions->hasPermission('article_creer'),
             'article_editer_tous' => $this->permissions->hasPermission('article_editer_tous'),
             'article_publier' => $this->permissions->hasPermission('article_publier'),
@@ -37,56 +33,61 @@ class ConnexionControlleur
         $dashboardModel = new Dashboard();
         $listeUtilisateurs = [];
         $tousLesRoles = [];
+        $tousLesArticles = [];
         if ($rolesPermissions['utilisateur_gerer']) {
             $listeUtilisateurs = $dashboardModel->getUtilisateursAvecRoles();
             $tousLesRoles = $dashboardModel->getAllRoles();
+        }
+        if ($rolesPermissions['article_editer_tous']) {
+            $tousLesArticles = $dashboardModel->getAllArticlesWithAuthors();
         }
         echo $this->twig->render('dashboard.twig', [
             'userId' => $userId,
             'permissions' => $rolesPermissions,
             'listeUtilisateurs' => $listeUtilisateurs,
             'tousLesRoles' => $tousLesRoles,
-			'articlesNav' => $this->articleModel->getArticlesNav()
+            'articlesNav' => $this->articleModel->getArticlesNav(),
+            'tousLesArticles' => $tousLesArticles,
         ]);
     }
 
-	public function inscription() {
-		echo $this->twig->render('inscription.twig', [
-			'articlesNav' => $this->articleModel->getArticlesNav()
-		]);
-	}
-	
-	public function traitementInscription() {
-		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-			$username = htmlspecialchars($_POST['username']);
-			$email = htmlspecialchars($_POST['email']);
-			$password = $_POST['password'];
-			$confirm = $_POST['confirm_password'];
+    public function inscription() {
+        echo $this->twig->render('inscription.twig', [
+            'articlesNav' => $this->articleModel->getArticlesNav()
+        ]);
+    }
 
-			if ($password !== $confirm) {
-				echo $this->twig->render('inscription.twig', [
-					'error' => "Les mots de passe ne correspondent pas.",
-					'data' => $_POST, // Pour ne pas tout retaper
-					'articlesNav' => $this->articleModel->getArticlesNav()
-				]);
-				return;
-			}
+    public function traitementInscription() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $username = htmlspecialchars($_POST['username']);
+            $email = htmlspecialchars($_POST['email']);
+            $password = $_POST['password'];
+            $confirm = $_POST['confirm_password'];
 
-			$connexionModel = new Connexion();
-			$result = $connexionModel->registerUser($username, $email, $password);
+            if ($password !== $confirm) {
+                echo $this->twig->render('inscription.twig', [
+                    'error' => "Les mots de passe ne correspondent pas.",
+                    'data' => $_POST, // Pour ne pas tout retaper
+                    'articlesNav' => $this->articleModel->getArticlesNav()
+                ]);
+                return;
+            }
 
-			if ($result === true) {
-				header('Location: /connexion'); 
-				exit;
-			} else {
-				echo $this->twig->render('inscription.twig', [
-					'error' => $result,
-					'data' => $_POST,
-					'articlesNav' => $this->articleModel->getArticlesNav()
-				]);
-			}
-		}
-	}
+            $connexionModel = new Connexion();
+            $result = $connexionModel->registerUser($username, $email, $password);
+
+            if ($result === true) {
+                header('Location: /connexion');
+                exit;
+            } else {
+                echo $this->twig->render('inscription.twig', [
+                    'error' => $result,
+                    'data' => $_POST,
+                    'articlesNav' => $this->articleModel->getArticlesNav()
+                ]);
+            }
+        }
+    }
 
     public function majRoles() {
         // On utilise le logger de la classe
@@ -105,7 +106,7 @@ class ConnexionControlleur
                 $dashboardModel = new Dashboard();
                 $result = $dashboardModel->updateRoles($userId, $roles);
 
-                if($result) {
+                if ($result) {
                     $this->logs->log("majRoles: Succès updateRoles");
                 } else {
                     $this->logs->log("majRoles: Erreur retournée par updateRoles");
@@ -124,7 +125,7 @@ class ConnexionControlleur
         exit;
     }
 
-    public function changerUtilisateur(){
+    public function changerUtilisateur() {
         $this->logs->log("toggleUser-entree dans fct");
         if (isset($_POST['id'])) {
             $this->logs->log("toggleUser-entree dans if");
@@ -133,29 +134,53 @@ class ConnexionControlleur
             $dashboardModel = new Dashboard();
             $dashboardModel->changerStatutUtilisateur($userId);
         }
-    }public function supprimerUtilisateur() {
-    // 1. Vérifier la permission
-    $logger = Logger::getInstance();
-    $logger->log("supprimerUtilisateur");
-    if ($this->permissions->hasPermission('utilisateur_gerer')) {
-        $logger->log("supprimerUtilisateur permission");
-        // 2. Vérifier le POST
-        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['user_id'])) {
-            $userId = intval($_POST['user_id']);
-            $logger->log("supprimerUtilisateur : user_id " . $userId);
-            // Empêcher de se supprimer soi-même (sécurité basique)
-            $session = SessionManager::getInstance();
-            if ($userId === $session->get('user_id')) {
-                // On peut ajouter un message flash ici si vous en avez
-            } else {
-                $dashboardModel = new Dashboard();
-                $dashboardModel->deleteUser($userId);
+    }
+
+    public function supprimerUtilisateur() {
+        // 1. Vérifier la permission
+        $logger = Logger::getInstance();
+        $logger->log("supprimerUtilisateur");
+        if ($this->permissions->hasPermission('utilisateur_gerer')) {
+            $logger->log("supprimerUtilisateur permission");
+            // 2. Vérifier le POST
+            if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['user_id'])) {
+                $userId = intval($_POST['user_id']);
+                $logger->log("supprimerUtilisateur : user_id " . $userId);
+                // Empêcher de se supprimer soi-même (sécurité basique)
+                $session = SessionManager::getInstance();
+                if ($userId === $session->get('user_id')) {
+                    // On peut ajouter un message flash ici si vous en avez
+                } else {
+                    $dashboardModel = new Dashboard();
+                    $dashboardModel->deleteUser($userId);
+                }
             }
         }
+        header('Location: /connexion');
+        exit;
     }
-    header('Location: /connexion');
-    exit;
-}
+
+    public function changerStatutArticle() {
+        if ($this->permissions->hasPermission('article_editer_tous')) {
+            if (isset($_POST['article_id']) && isset($_POST['statut'])) {
+                $dashboardModel = new Dashboard();
+                $dashboardModel->updateArticleStatus($_POST['article_id'], $_POST['statut']);
+            }
+        }
+        header('Location: /connexion');
+        exit;
+    }
+
+    public function supprimerArticle() {
+        if ($this->permissions->hasPermission('article_supprimer')) {
+            if (isset($_POST['article_id'])) {
+                $dashboardModel = new Dashboard();
+                $dashboardModel->deleteArticle($_POST['article_id']);
+            }
+        }
+        header('Location: /connexion');
+        exit;
+    }
 
 
 }

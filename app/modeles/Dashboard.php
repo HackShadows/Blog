@@ -96,4 +96,29 @@ class Dashboard
         }
     }
 
+    public function getAllArticlesWithAuthors() {
+        $query = $this->db->prepare("SELECT a.*, u.nom_utilisateur 
+                FROM Articles a 
+                JOIN Utilisateurs u ON a.utilisateur_id = u.id 
+                ORDER BY a.date_creation DESC");
+        $query->execute();
+        $articles = $query->fetchAll(PDO::FETCH_ASSOC);
+        return $articles;
+    }
+
+    public function updateArticleStatus($id, $newStatus) {
+        $allowed = ['Brouillon', 'Publié', 'Archivé'];
+        if (!in_array($newStatus, $allowed)) return false;
+
+        $query = $this->db->prepare("UPDATE Articles SET statut = ? WHERE id = ?");
+        $query->execute([$newStatus, $id]);
+        return true;
+    }
+
+    public function deleteArticle($id) {
+        $query = $this->db->prepare("DELETE FROM Articles WHERE id = ?");
+        $query->execute([$id]);
+        return true;
+    }
+
 }

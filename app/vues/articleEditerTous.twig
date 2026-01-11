@@ -1,0 +1,96 @@
+<hr class="my-5">
+<div class="d-flex justify-content-between align-items-center mb-3">
+	<h1>Espace Éditeur - Gestion des Articles</h1>
+</div>
+
+<div class="table-responsive">
+	<table class="table table-bordered table-hover align-middle">
+		<thead class="table-light">
+		<tr>
+			<th>Titre</th>
+			<th>Auteur</th>
+			<th>Date</th>
+			<th>Statut Actuel</th>
+			<th class="text-center">Changer Statut</th>
+			<th class="text-center">Supprimer</th>
+		</tr>
+		</thead>
+		<tbody>
+		{% for article in tousLesArticles %}
+			<tr>
+				<td>
+					<strong>{{ article.titre }}</strong>
+					<br>
+					<small class="text-muted">Slug: {{ article.slug }}</small>
+				</td>
+				<td>{{ article.nom_utilisateur }}</td>
+				<td>{{ article.date_creation|date("d/m/Y H:i") }}</td>
+
+				{# Badge du statut actuel #}
+				<td>
+					{% if article.statut == 'Publié' %}
+						<span class="badge bg-success">Publié</span>
+					{% elseif article.statut == 'Archivé' %}
+						<span class="badge bg-warning text-dark">Archivé</span>
+					{% else %}
+						<span class="badge bg-secondary">Brouillon</span>
+					{% endif %}
+				</td>
+
+				{# Actions de changement de statut #}
+				<td class="text-center">
+					<div class="d-flex justify-content-center gap-2">
+
+						{# Bouton PUBLIER (si pas déjà publié) #}
+						{% if article.statut != 'Publié' %}
+							<form action="/changerStatutArticle" method="POST">
+								<input type="hidden" name="article_id" value="{{ article.id }}">
+								<input type="hidden" name="statut" value="Publié">
+								<button type="submit" class="btn btn-sm btn-success" title="Publier">
+									Publier
+								</button>
+							</form>
+						{% endif %}
+
+						{# Bouton ARCHIVER (si pas déjà archivé) #}
+						{% if article.statut != 'Archivé' %}
+							<form action="/changerStatutArticle" method="POST">
+								<input type="hidden" name="article_id" value="{{ article.id }}">
+								<input type="hidden" name="statut" value="Archivé">
+								<button type="submit" class="btn btn-sm btn-warning" title="Archiver">
+									Archiver
+								</button>
+							</form>
+						{% endif %}
+
+						{# Bouton BROUILLON (si publié ou archivé) #}
+						{% if article.statut != 'Brouillon' %}
+							<form action="/changerStatutArticle" method="POST">
+								<input type="hidden" name="article_id" value="{{ article.id }}">
+								<input type="hidden" name="statut" value="Brouillon">
+								<button type="submit" class="btn btn-sm btn-secondary" title="Mettre en brouillon">
+									Brouillon
+								</button>
+							</form>
+						{% endif %}
+
+					</div>
+				</td>
+
+				{# Action Supprimer #}
+				<td class="text-center">
+					<form action="/supprimerArticle" method="POST"
+						  onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet article ?');">
+						<input type="hidden" name="article_id" value="{{ article.id }}">
+						<button type="submit" class="btn btn-sm btn-danger">X</button>
+					</form>
+				</td>
+			</tr>
+		{% else %}
+			<tr>
+				<td colspan="6" class="text-center">Aucun article trouvé.</td>
+			</tr>
+		{% endfor %}
+		</tbody>
+	</table>
+</div>

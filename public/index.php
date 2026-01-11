@@ -94,6 +94,12 @@ if (isset($_GET['id'])) {
         case '/supprimerUtilisateur':
             $ConnexionControlleur->supprimerUtilisateur();
             break;
+        case '/changerStatutArticle':
+            $ConnexionControlleur->changerStatutArticle();
+            break;
+        case '/supprimerArticle':
+            $ConnexionControlleur->supprimerArticle();
+            break;
         default:
             http_response_code(404);
             break;
