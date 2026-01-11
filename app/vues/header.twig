@@ -6,7 +6,7 @@
 			<div :class="articleOpen ? 'menu_show' : 'menu'">
 				{# <template x-for="indice in [0, 1]" :key="indice"> #}
 				{% set numArticle = 1 %}
-				{% for article in url %}
+				{% for article in articlesNav %}
 					<a href="/{{ article.slug }}?id={{ article.id }}">Article
 						{{ numArticle }}
 					</a>
@@ -20,6 +20,7 @@
 		{% else %}
 			<a href="/connexion" class="menu-item">Connexion</a>
 		{% endif %}		
+		<button class="btn btn-sm btn-outline-info me-2" onclick="toggleDyslexic()">Dyslexie</button>
 		<img src="../../images/lune.png" alt="Lune" id="darkModeIcon">
 	</nav>
 </header>

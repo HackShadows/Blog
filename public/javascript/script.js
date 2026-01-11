@@ -48,8 +48,8 @@ let darkMode = localStorage.getItem('darkMode') === 'true';
 function updateBg() {
 	darkModeIcon.src = darkMode ? '/images/soleil.png' : '/images/lune.png';
 	darkModeIcon.alt = darkMode ? 'Soleil' : 'Lune';
-	// Sauvegarde de la préférence dans le stockage local
-	localStorage.setItem('darkMode', darkMode);
+	document.documentElement.setAttribute('data-bs-theme', darkMode ? 'dark' : 'light');
+	
 	if (darkMode) {
 		document.documentElement.style.setProperty('--c', '20');
 		document.documentElement.style.setProperty('--font-color', 'rgb(220, 220, 220)');
@@ -59,11 +59,20 @@ function updateBg() {
 	}
 }
 
+function toggleDyslexic() {
+    document.body.classList.toggle('dyslexic-mode');
+    localStorage.setItem('dyslexic', document.body.classList.contains('dyslexic-mode'));
+}
+
 // Événement de clic sur l'icône
 darkModeIcon.addEventListener('click', function() {
 	darkMode = !darkMode;
+	// Sauvegarde de la préférence dans le stockage local
+	localStorage.setItem('darkMode', darkMode);
 	updateBg();
 });
 
-// Initialisation de la couleur de fond au chargement de la page
+
+// Au chargement :
+if (localStorage.getItem('dyslexic') === 'true') document.body.classList.add('dyslexic-mode');
 updateBg();

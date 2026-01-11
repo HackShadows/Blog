@@ -4,21 +4,19 @@ class ArticleControlleur
 	private $articleModel;
 	private $twig;
 	private $logs;
-	private $listeURLArticles;
 
 	public function __construct(Twig\Environment $twig)
 	{
 		$this->articleModel = new Articles();
 		$this->logs = Logger::getInstance();
 		$this->twig = $twig;
-		$this->listeURLArticles = $this->articleModel->getArticlesURL();
 	}
 
 	public function index($messageErreur)
 	{
 		$this->logs->log("accueil");
 		$resumes = $this->articleModel->getResumeArticles();
-		echo $this->twig->render('accueil.twig', ['resumes' => $resumes, 'url' => $this->listeURLArticles, "erreur" => $messageErreur]);
+		echo $this->twig->render('accueil.twig', ['resumes' => $resumes, 'articlesNav' => $this->articleModel->getArticlesNav(), "erreur" => $messageErreur]);
 	}
 
 	public function article($articleId)
@@ -38,7 +36,7 @@ class ArticleControlleur
 		// }
 		// $dico = $dico . "]";
 		// $this->logs->log($dico);
-		echo $this->twig->render('article.twig', ['article' => $article, 'commentaires' => $commentaires, 'url' => $this->listeURLArticles]);
+		echo $this->twig->render('article.twig', ['article' => $article, 'commentaires' => $commentaires, 'articlesNav' => $this->articleModel->getArticlesNav()]);
 	}
 	// public function addTask($taskName)
 	// {

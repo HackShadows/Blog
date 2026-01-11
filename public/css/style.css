@@ -20,23 +20,34 @@ Ce fichier permet de mettre en style le fichier index.html
 	--footer-font-color: rgb(220, 220, 220);
 }
 
-html {
+/* html {
 	box-sizing: border-box;
 	background-color: rgb(35, 33, 33);
-}
+}*/
 
 body {
-	font-family: Arial, sans-serif;
-	background-color: var(--background-color);
+	font-family: Arial, sans-serif !important;
+    background-color: var(--background-color) !important; 
+    color: var(--font-color);
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+@font-face {
+    font-family: 'OpenDyslexic';
+    src: url('https://cdnjs.cloudflare.com/ajax/libs/opendyslexic/0.91.0/OpenDyslexic-Regular.woff') format('woff');
+}
+body.dyslexic-mode {
+    font-family: 'OpenDyslexic', sans-serif !important;
+    line-height: 1.6 !important;
+}
+
+[data-bs-theme="dark"] body {
+    background-color: var(--background-color);
+    color: var(--font-color);
 }
 
 
 
-/* .wrapper {
-	min-height: 100vh;
-	display: flex;
-	flex-direction: column;
-} */
 .wrapper {
 	display: grid;
 	grid-template-areas: "header" "main" "footer";
@@ -55,9 +66,9 @@ main {
 	color: var(--font-color);
 }
 
-table {
+/* table {
 	color: var(--font-color);
-}
+} */
 
 nav,
 footer {

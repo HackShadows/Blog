@@ -24,7 +24,7 @@ class Articles
 		return $answer;
 	}
 
-	public function getArticlesURL()
+	public function getArticlesNav()
 	{
 		$query = $this->db->prepare("SELECT id, slug FROM Articles WHERE statut = 'Publié'
 											ORDER BY date_mise_a_jour DESC limit 5");

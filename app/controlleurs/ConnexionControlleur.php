@@ -4,18 +4,20 @@ class ConnexionControlleur
 	private $twig;
 	private $logs;
 	private $permissions;
+	private $articleModel;
 
 	public function __construct(Twig\Environment $twig)
 	{
 		$this->logs = Logger::getInstance();
 		$this->twig = $twig;
 		$this->permissions = new Permissions();
+		$this->articleModel = new Articles();
 	}
 
 	public function index()
 	{
 		$this->logs->log("connexion");
-		echo $this->twig->render('connexion.twig', []);
+		echo $this->twig->render('connexion.twig', ['articlesNav' => $this->articleModel->getArticlesNav()]);
 	}
 
 	public function dashboard($userEmail)
@@ -36,7 +38,8 @@ class ConnexionControlleur
             'userId' => $userId,
             'roles' => $rolesConnecte,
             'listeUtilisateurs' => $listeUtilisateurs,
-            'tousLesRoles' => $tousLesRoles
+            'tousLesRoles' => $tousLesRoles,
+			'articlesNav' => $this->articleModel->getArticlesNav()
         ]);
     }
 
