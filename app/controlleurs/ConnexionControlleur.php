@@ -43,6 +43,44 @@ class ConnexionControlleur
         ]);
     }
 
+	public function inscription() {
+		echo $this->twig->render('inscription.twig', [
+			'articlesNav' => $this->articleModel->getArticlesNav()
+		]);
+	}
+	
+	public function traitementInscription() {
+		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+			$username = htmlspecialchars($_POST['username']);
+			$email = htmlspecialchars($_POST['email']);
+			$password = $_POST['password'];
+			$confirm = $_POST['confirm_password'];
+
+			if ($password !== $confirm) {
+				echo $this->twig->render('inscription.twig', [
+					'error' => "Les mots de passe ne correspondent pas.",
+					'data' => $_POST, // Pour ne pas tout retaper
+					'articlesNav' => $this->articleModel->getArticlesNav()
+				]);
+				return;
+			}
+
+			$connexionModel = new Connexion();
+			$result = $connexionModel->registerUser($username, $email, $password);
+
+			if ($result === true) {
+				header('Location: /connexion'); 
+				exit;
+			} else {
+				echo $this->twig->render('inscription.twig', [
+					'error' => $result,
+					'data' => $_POST,
+					'articlesNav' => $this->articleModel->getArticlesNav()
+				]);
+			}
+		}
+	}
+
     public function majRoles() {
         // On utilise le logger de la classe
         $this->logs->log("majRoles: Début du traitement");

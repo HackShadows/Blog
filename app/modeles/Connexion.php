@@ -44,23 +44,40 @@ class Connexion
         $this->session->set('username', null);
     }
 
-	public function createUser() {
-		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-			$email = $_POST['email'] ?? '';
-			$username = $_POST['username'] ?? '';
-			$password = $_POST['password'] ?? '';
-			try {
-				$id = $this->db->prepare("SELECT MAX(id)+1 FROM Utilisateurs");
-				$id->execute();
-				$query = $this->db->prepare("INSERT INTO Utilisateurs (id, email, nom_utilisateur, mot_de_passe, est_actif, date_inscription) VALUES (?, ?, ?, ?, 1, CURRENT_TIMESTAMP)");
-				$query->execute([$id, $email, $username, $password]);
-				$query = $this->db->prepare("INSERT INTO Role_User (role_id, user_id) VALUES (3, ?)");
-				$query->execute([$id]);
-				$this->logger->log("Création de  compte réussie pour {$username}");
-				exit;
-			} catch (PDOException $e) {
-				$this->logger->log("Erreur PDO : " . $e->getMessage());
+	public function registerUser($username, $email, $password) {
+		try {
+			// 1. Vérifier si l'utilisateur existe déjà
+			$check = $this->db->prepare("SELECT id FROM Utilisateurs WHERE email = ? OR nom_utilisateur = ?");
+			$check->execute([$email, $username]);
+			if ($check->fetch()) {
+				return "Cet email ou ce nom d'utilisateur est déjà pris.";
 			}
+
+			// 2. Hachage du mot de passe (Sécurité)
+			$hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+
+			// 3. Démarrer une transaction (Pour insérer User + Rôle atomiquement)
+			$this->db->beginTransaction();
+
+			// Insertion Utilisateur
+			$query = $this->db->prepare("INSERT INTO Utilisateurs (nom_utilisateur, email, mot_de_passe, est_actif, date_inscription) VALUES (?, ?, ?, 1, NOW())");
+			$query->execute([$username, $email, $hashedPassword]);
+			
+			// Récupération de l'ID créé automatiquement
+			$userId = $this->db->lastInsertId();
+
+			// Attribution du rôle par défaut (3 = Contributeur)
+			$queryRole = $this->db->prepare("INSERT INTO Role_User (role_id, user_id) VALUES (3, ?)");
+			$queryRole->execute([$userId]);
+
+			$this->db->commit();
+			$this->logger->log("Nouveau compte créé : $username");
+			return true;
+
+		} catch (PDOException $e) {
+			$this->db->rollBack();
+			$this->logger->log("Erreur inscription : " . $e->getMessage());
+			return "Erreur technique lors de l'inscription.";
 		}
 	}
 

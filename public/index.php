@@ -72,6 +72,12 @@ if (isset($_GET['id'])) {
 		case '/posterCommentaire':
 			$CommentaireControlleur->posterCommentaire();
 			break;
+		case '/inscription':
+			$ConnexionControlleur->inscription();
+			break;
+		case '/traitementInscription':
+			$ConnexionControlleur->traitementInscription();
+			break;
         case '/deconnexion':
             $connexion->logOut();
             $ArticleControlleur->index(null);
