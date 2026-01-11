@@ -11,7 +11,10 @@
 	{% if permissions['article_editer_tous'] %}
 		{% include "articleEditerTous.twig" %}
 	{% endif %}
-	{% if permissons['article_publier'] and not permissions['article_editer_tous'] %}
+	{% if permissions['article_publier'] and not permissions['article_editer_tous'] %}
 		{% include "articlePublier.twig" %}
+	{% endif %}
+	{% if permissions['article_supprimer'] and not permissions['article_editer_tous'] %}
+		{% include "articleSupprimer.twig" %}
 	{% endif %}
 {% endblock %}
