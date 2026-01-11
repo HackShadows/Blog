@@ -74,6 +74,9 @@ if (isset($_GET['id'])) {
         case '/majRoles':
             $ConnexionControlleur->majRoles();
             break;
+        case '/supprimerUtilisateur':
+            $ConnexionControlleur->supprimerUtilisateur();
+            break;
         default:
             http_response_code(404);
             break;

@@ -85,5 +85,29 @@ class ConnexionControlleur
             $dashboardModel = new Dashboard();
             $dashboardModel->changerStatutUtilisateur($userId);
         }
+    }public function supprimerUtilisateur() {
+    // 1. Vérifier la permission
+    $logger = Logger::getInstance();
+    $logger->log("supprimerUtilisateur");
+    if ($this->permissions->hasPermission('utilisateur_gerer')) {
+        $logger->log("supprimerUtilisateur permission");
+        // 2. Vérifier le POST
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['user_id'])) {
+            $userId = intval($_POST['user_id']);
+            $logger->log("supprimerUtilisateur : user_id " . $userId);
+            // Empêcher de se supprimer soi-même (sécurité basique)
+            $session = SessionManager::getInstance();
+            if ($userId === $session->get('user_id')) {
+                // On peut ajouter un message flash ici si vous en avez
+            } else {
+                $dashboardModel = new Dashboard();
+                $dashboardModel->deleteUser($userId);
+            }
+        }
     }
+    header('Location: /connexion');
+    exit;
+}
+
+
 }

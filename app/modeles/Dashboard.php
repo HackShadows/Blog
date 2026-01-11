@@ -73,4 +73,27 @@ class Dashboard
         }
     }
 
+    // app/modeles/Dashboard.php
+
+    public function deleteUser($userId) {
+        try {
+            $this->db->beginTransaction();
+
+            $stmtArticles = $this->db->prepare("DELETE FROM Articles WHERE utilisateur_id = ?");
+            $stmtArticles->execute([$userId]);
+
+            $stmtUser = $this->db->prepare("DELETE FROM Utilisateurs WHERE id = ?");
+            $stmtUser->execute([$userId]);
+
+            $this->db->commit();
+            return true;
+
+        } catch (PDOException $e) {
+            $this->db->rollBack();
+
+            Logger::getInstance()->log("Erreur suppression user $userId : " . $e->getMessage());
+            return false;
+        }
+    }
+
 }

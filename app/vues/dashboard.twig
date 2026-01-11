@@ -76,47 +76,66 @@ admin : ensemble des comm en attente et articles
 								Modifier Rôles
 							</button>
 						</td>
+						<td>
+							<form action="/supprimerUtilisateur" method="POST"
+								  onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer définitivement cet utilisateur ? Cette action est irréversible.');">
+
+								<input type="hidden" name="user_id" value="{{ utilisateur.id }}">
+								<button type="submit" class="btn btn-danger btn-sm">
+									<i class="bi bi-trash"></i> Supprimer
+								</button>
+							</form>
+						</td>
 					</tr>
 				{% endfor %}
 			</table>
 
-			<div class="modal" x-show="modalOpen" x-cloak>
-				<div class="modal-dialog">
-					<div class="modal-content" @click.away="modalOpen = false">
-						<div class="modal-header">
-							<h5 class="modal-title">Attribuer des rôles</h5>
-						</div>
+		{# --- MODALE CORRIGÉE --- #}
+		<div class="modal fade"
+			 :class="{ 'show d-block': modalOpen }"
+			 style="background-color: rgba(0,0,0,0.5); z-index: 1050;"
+			 tabindex="-1"
+			 role="dialog"
+			 x-show="modalOpen"
+			 x-transition.opacity
+			 x-cloak>
 
-						<form action="/majRoles" method="POST">
-							<div class="modal-body">
-								<input type="hidden" name="user_id" :value="userToEdit">
-								<p class="mb-3">Sélectionnez les rôles (plusieurs possibles) :</p>
-
-								{# Liste de TOUS les rôles disponibles #}
-								<div class="list-group">
-									{% for role in tousLesRoles %}
-										<label class="list-group-item d-flex gap-2">
-											{# Checkbox avec name="roles[]" pour envoyer un tableau à PHP #}
-											<input class="form-check-input flex-shrink-0"
-												   type="checkbox"
-												   name="roles[]"
-												   value="{{ role.id }}"
-												   :checked="userRoles.includes({{ role.id }})">
-											<span>
-                                        {{ role.nom_role }}
-                                        <small class="d-block text-muted">{{ role.description }}</small>
-                                    </span>
-										</label>
-									{% endfor %}
-								</div>
-							</div>
-							<div class="modal-footer">
-								<button type="button" class="btn btn-secondary" @click="modalOpen = false">Annuler
-								</button>
-								<button type="submit" class="btn btn-success">Enregistrer</button>
-							</div>
-						</form>
+			<div class="modal-dialog modal-dialog-centered" role="document">
+				<div class="modal-content" @click.away="modalOpen = false">
+					<div class="modal-header">
+						<h5 class="modal-title">Attribuer des rôles</h5>
+						{# Bouton croix pour fermer #}
+						<button type="button" class="btn-close" @click="modalOpen = false" aria-label="Close"></button>
 					</div>
+
+					<form action="/majRoles" method="POST">
+						<div class="modal-body">
+							{# On s'assure que l'ID est bien injecté #}
+							<input type="hidden" name="user_id" :value="userToEdit">
+
+							<p class="mb-3">Sélectionnez les rôles (plusieurs possibles) :</p>
+
+							<div class="list-group">
+								{% for role in tousLesRoles %}
+									<label class="list-group-item d-flex gap-2">
+										<input class="form-check-input flex-shrink-0"
+											   type="checkbox"
+											   name="roles[]"
+											   value="{{ role.id }}"
+											   :checked="userRoles.includes({{ role.id }})">
+										<span>
+                                    {{ role.nom_role }}
+                                    <small class="d-block text-muted">{{ role.description }}</small>
+                                </span>
+									</label>
+								{% endfor %}
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" @click="modalOpen = false">Annuler</button>
+							<button type="submit" class="btn btn-success">Enregistrer</button>
+						</div>
+					</form>
 				</div>
 			</div>
 		</div>
