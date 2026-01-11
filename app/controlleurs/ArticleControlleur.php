@@ -97,4 +97,71 @@ class ArticleControlleur
 			}
 		}
 	}
+
+	public function editer()
+	{
+		// 1. Sécurité
+		$session = SessionManager::getInstance();
+		if (!$session->get('user_id')) { header('Location: /connexion'); exit; }
+
+		// 2. Récupération
+		if (!isset($_GET['id'])) { header('Location: /accueil'); exit; }
+		$article = $this->articleModel->getArticle($_GET['id']);
+
+		if (!$article) { header('Location: /accueil'); exit; }
+
+		// 3. Vérification Propriétaire
+		// On compare le nom d'utilisateur de l'article avec celui de la session
+		if ($article['nom_utilisateur'] !== $session->get('username')) {
+			// Si ce n'est pas mon article, retour au dashboard
+			header('Location: /connexion'); 
+			exit;
+		}
+
+		$peutPublier = $this->permissions->hasPermission('article_publier');
+
+		echo $this->twig->render('creer_article.twig', [
+			'is_edit' => true,      // Active le mode édition
+			'data' => $article,     // Pré-remplit les champs
+			'article_id' => $article['id'],
+			'articlesNav' => $this->articleModel->getArticlesNav(),
+			'peutPublier' => $peutPublier
+		]);
+	}
+
+	public function traitementEdition()
+	{
+		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+			$id = $_POST['article_id'];
+			$titre = trim($_POST['titre']);
+			$contenu = $_POST['contenu'];
+			$statut = $_POST['statut'];
+			
+			// RÈGLE MÉTIER : Si pas de permission publier, on force le statut Brouillon
+			if (!$this->permissions->hasPermission('article_publier')) {
+				$statut = 'Brouillon';
+			}
+
+			// Régénération du slug (au cas où le titre change)
+			$slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', iconv('UTF-8', 'ASCII//TRANSLIT', $titre))));
+
+			$result = $this->articleModel->updateArticle($id, $titre, $slug, $contenu, $statut);
+
+			if ($result === true) {
+				header('Location: /connexion');
+				exit;
+			} else {
+				// Erreur : on réaffiche le formulaire
+				$peutPublier = $this->permissions->hasPermission('article_publier');
+				echo $this->twig->render('creer_article.twig', [
+					'is_edit' => true,
+					'error' => is_string($result) ? $result : "Erreur lors de la mise à jour",
+					'data' => $_POST,
+					'article_id' => $id,
+					'articlesNav' => $this->articleModel->getArticlesNav(),
+					'peutPublier' => $peutPublier
+				]);
+			}
+		}
+	}
 }

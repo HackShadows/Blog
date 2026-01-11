@@ -3,6 +3,7 @@
 {% block main %}
 	{% if permissions['article_creer'] %}
 		{% include "articleCreer.twig" %}
+		{% include "mesArticles.twig" %}
 	{% endif %}
 	{% if permissions['utilisateur_gerer'] %}
 		{% include "gestionUtilisateur.twig" %}

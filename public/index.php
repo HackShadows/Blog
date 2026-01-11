@@ -84,6 +84,12 @@ if (isset($_GET['id'])) {
 		case '/traitementCreation':
 			$ArticleControlleur->traitementCreation();
 			break;
+		case '/editer-article':
+			$ArticleControlleur->editer();
+			break;
+		case '/traitementEdition':
+			$ArticleControlleur->traitementEdition();
+			break;
         case '/deconnexion':
             $connexion->logOut();
             $ArticleControlleur->index(null);

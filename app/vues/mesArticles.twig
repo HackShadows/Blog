@@ -1,0 +1,41 @@
+<hr class="my-5">
+<div class="mb-3">
+    <h2>Mes Articles</h2>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-striped table-hover align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>Titre</th>
+                <th>Date MAJ</th>
+                <th>Statut</th>
+                <th class="text-center">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for article in mesArticles %}
+                <tr>
+                    <td>{{ article.titre }}</td>
+                    <td>{{ article.date_mise_a_jour|date("d/m/Y H:i") }}</td>
+                    <td>
+                        {% if article.statut == 'Publié' %}
+                            <span class="badge bg-success">Publié</span>
+                        {% elseif article.statut == 'Archivé' %}
+                            <span class="badge bg-warning text-dark">Archivé</span>
+                        {% else %}
+                            <span class="badge bg-secondary">Brouillon</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-center">
+                        <a href="/editer-article?id={{ article.id }}" class="btn btn-primary btn-sm">
+                            ✏️ Modifier
+                        </a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr><td colspan="4" class="text-center">Vous n'avez écrit aucun article.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

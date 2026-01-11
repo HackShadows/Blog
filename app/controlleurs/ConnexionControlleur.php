@@ -41,6 +41,9 @@ class ConnexionControlleur {
         if ($rolesPermissions['article_editer_tous']) {
             $tousLesArticles = $dashboardModel->getAllArticlesWithAuthors();
         }
+
+		$mesArticles = $dashboardModel->getArticlesAuteur($userId);
+
         echo $this->twig->render('dashboard.twig', [
             'userId' => $userId,
             'permissions' => $rolesPermissions,
@@ -48,6 +51,7 @@ class ConnexionControlleur {
             'tousLesRoles' => $tousLesRoles,
             'articlesNav' => $this->articleModel->getArticlesNav(),
             'tousLesArticles' => $tousLesArticles,
+			'mesArticles' => $mesArticles
         ]);
     }
 

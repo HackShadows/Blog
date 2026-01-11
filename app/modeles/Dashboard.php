@@ -73,7 +73,11 @@ class Dashboard
         }
     }
 
-    // app/modeles/Dashboard.php
+    public function getArticlesAuteur($userId) {
+		$query = $this->db->prepare("SELECT * FROM Articles WHERE utilisateur_id = ? ORDER BY date_creation DESC");
+		$query->execute([$userId]);
+		return $query->fetchAll(PDO::FETCH_ASSOC);
+	}
 
     public function deleteUser($userId) {
         try {

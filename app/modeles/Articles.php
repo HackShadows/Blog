@@ -70,6 +70,21 @@ class Articles
 		}
 	}
 
+	public function updateArticle($id, $titre, $slug, $contenu, $statut)
+	{
+		try {
+			$query = $this->db->prepare("UPDATE Articles 
+										SET titre = ?, slug = ?, contenu = ?, statut = ?, date_mise_a_jour = NOW() 
+										WHERE id = ?");
+			return $query->execute([$titre, $slug, $contenu, $statut, $id]);
+		} catch (PDOException $e) {
+			if ($e->getCode() == 23000) {
+				return "Ce titre existe déjà (le slug est dupliqué).";
+			}
+			return false;
+		}
+	}
+
 	public function slugExiste($slug) {
 		$query = $this->db->prepare("SELECT id FROM Articles WHERE slug = ?");
 		$query->execute([$slug]);
