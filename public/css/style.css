@@ -55,6 +55,10 @@ main {
 	color: var(--font-color);
 }
 
+table {
+	color: var(--font-color);
+}
+
 nav,
 footer {
 	background-color: var(--footer-bg-color);
@@ -128,6 +132,7 @@ nav a:hover {
 	cursor: pointer;
 	z-index: 99;
 	filter: drop-shadow(0 0 2px white);
+	box-sizing: initial;
 }
 
 
