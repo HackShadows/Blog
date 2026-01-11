@@ -63,7 +63,7 @@ switch ($uri) {
         break;
     case '/changerUtilisateur':
         $ConnexionControlleur->changerUtilisateur();
-		$ConnexionControlleur->dashboard();
+        $ConnexionControlleur->dashboard();
         break;
     case '/posterCommentaire':
         $CommentaireControlleur->posterCommentaire();
@@ -104,6 +104,9 @@ switch ($uri) {
         break;
     case '/changerStatutCommentaire':
         $ConnexionControlleur->changerStatutCommentaire();
+        break;
+    case '/supprimerCommentaire':
+        $ConnexionControlleur->supprimerCommentaire();
         break;
 
     default:
