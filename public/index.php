@@ -63,6 +63,7 @@ switch ($uri) {
         break;
     case '/changerUtilisateur':
         $ConnexionControlleur->changerUtilisateur();
+		$ConnexionControlleur->dashboard($_POST["email"]);
         break;
     case '/posterCommentaire':
         $CommentaireControlleur->posterCommentaire();
