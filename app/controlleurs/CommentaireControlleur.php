@@ -24,7 +24,11 @@ class CommentaireControlleur
             }
 
             if ($articleId && $contenu && $email) {
-                $this->articleModel->ajouterCommentaire($articleId, $nom, $email, $contenu);
+                $article = $this->articleModel->getArticle($articleId);
+                
+                if ($article && $article['statut'] === 'Publié') {
+                    $this->articleModel->ajouterCommentaire($articleId, $nom, $email, $contenu);
+                }
             }
             
             // Redirection vers l'article

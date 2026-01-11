@@ -10,7 +10,7 @@ class Articles
 
 	public function getArticle($articleId)
 	{
-		$query = $this->db->prepare("SELECT a.id, a.titre, a.contenu, a.image_une, a.date_creation, a.date_mise_a_jour, u.nom_utilisateur FROM Articles a 
+		$query = $this->db->prepare("SELECT a.id, a.titre, a.contenu, a.image_une, a.date_creation, a.statut, a.date_mise_a_jour, u.nom_utilisateur FROM Articles a 
                                             JOIN Utilisateurs u ON a.utilisateur_id = u.id WHERE a.id = :id");
 		$query->bindParam(':id', $articleId);
 		$query->execute();
