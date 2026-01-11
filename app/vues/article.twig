@@ -6,6 +6,35 @@
 	<h3>Date de Mise à jour : {{ article["date_mise_a_jour"] }}</h3>
 	<h4>Créé par {{ article["nom_utilisateur"] }} le {{ article["date_creation"] }}</h4>
 	<hr>
+
+	<div x-data="{ showForm: false }" class="my-4">
+		<button @click="showForm = !showForm" class="btn btn-outline-primary mb-3">
+			<span x-text="showForm ? 'Fermer le formulaire' : 'Laisser un commentaire'"></span>
+		</button>
+		<form x-show="showForm" x-transition action="/posterCommentaire" method="POST" class="mb-5 p-4 border rounded bg-light text-dark">
+			<input type="hidden" name="article_id" value="{{ article.id }}">
+			
+			{% if session.get('user_id') is empty %}
+				<div class="mb-3">
+					<label class="form-label">Nom :</label>
+					<input type="text" name="nom_auteur" class="form-control" required>
+				</div>
+				<div class="mb-3">
+					<label class="form-label">Email :</label>
+					<input type="email" name="email_auteur" class="form-control">
+				</div>
+			{% else %}
+				<p>Connecté en tant que <strong>{{ session.get('username') }}</strong></p>
+			{% endif %}
+
+			<div class="mb-3">
+				<label class="form-label">Message :</label>
+				<textarea name="contenu" class="form-control" rows="3" required></textarea>
+			</div>
+			<button type="submit" class="btn btn-primary">Envoyer</button>
+		</form>
+	</div>
+
 	<div class="commentaires-list">
 		{% for commentaire in commentaires %}
 			{# <article class="article" onclick="location.href='/{{ article.slug }}?id={{ article.id }}'"> #}

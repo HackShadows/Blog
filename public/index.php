@@ -4,6 +4,7 @@ require_once '../vendor/autoload.php';
 /* inclure les controlleurs */
 require_once '../app/controlleurs/ArticleControlleur.php';
 require_once '../app/controlleurs/ConnexionControlleur.php';
+require_once '../app/controlleurs/CommentaireControlleur.php';
 /* inclure les modèles */
 require_once '../app/modeles/Articles.php';
 require_once '../app/modeles/Dashboard.php';
@@ -24,6 +25,7 @@ $twig = new Twig\Environment($loader);
 
 $ArticleControlleur = new ArticleControlleur($twig);
 $ConnexionControlleur = new ConnexionControlleur($twig);
+$CommentaireControlleur = new CommentaireControlleur();
 $connexion = new Connexion();
 $session = SessionManager::getInstance();
 $twig->addGlobal('session', $session);
@@ -67,6 +69,9 @@ if (isset($_GET['id'])) {
         case '/changerUtilisateur':
             $ConnexionControlleur->changerUtilisateur();
             break;
+		case '/posterCommentaire':
+			$CommentaireControlleur->posterCommentaire();
+			break;
         case '/deconnexion':
             $connexion->logOut();
             $ArticleControlleur->index(null);
