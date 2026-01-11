@@ -23,7 +23,7 @@ class Connexion
 				if ($user && password_verify($password, $user['mot_de_passe'])) {
 					$this->session->set('user_id', $user['id']);
 					$this->session->set('username', $user['nom_utilisateur']);
-					print_r($this->session->get('user_id'));
+					$this->session->set('email', $user['email']);
 					$this->logger->log("Connexion réussie pour {$user['nom_utilisateur']}");
 					return true;
 				} else {
