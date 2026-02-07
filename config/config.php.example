@@ -1,0 +1,8 @@
+<?php
+// Exemple de configuration BDD
+// Renommez ce fichier en 'config.php' et mettez vos propres informations
+
+define('DB_HOST', '127.0.0.1');      // Adresse du serveur (ex: localhost)
+define('DB_NAME', 'blog_db');        // Nom de la base de données
+define('DB_USER', 'root');           // Nom d'utilisateur MySQL
+define('DB_PASS', '');               // Mot de passe MySQL

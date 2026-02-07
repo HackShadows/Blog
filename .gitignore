@@ -1,5 +1,19 @@
-
-vendor/
+# Dépendances PHP
+/vendor/
 composer.lock
-public/app.log
-public/uploads
+
+# Fichiers système et IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# Fichiers de configuration sensibles
+config.php
+.env
+
+# Logs et uploads
+/public/app.log
+/public/uploads/*
+!/public/uploads/.gitkeep

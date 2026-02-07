@@ -5,9 +5,9 @@ class Database
     private PDO $connection;
 
     private function __construct() {
-        $dsn = 'mysql:host=127.0.0.1;dbname=blog_db;charset=utf8mb4';
-        $user = 'root';
-        $pass = '';
+        $dsn = 'mysql:host='.DB_HOST.';dbname='.DB_NAME.';charset=utf8mb4';
+        $user = DB_USER;
+        $pass = DB_PASS;
         $this->connection = new PDO($dsn, $user, $pass);
         $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
